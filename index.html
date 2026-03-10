@@ -7,22 +7,24 @@
     <meta name="description" content="Interactive Torah study with friends. Join a chavruta, explore weekly parsha insights, and learn together in community.">
     <link rel="canonical" href="https://sillybob123.github.io/index.html">
     <link rel="icon" type="image/png" href="media/images/Icon.png">
-    <link rel="apple-touch-icon" href="media/images/Icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="media/images/Icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="media/images/Icon.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="media/images/Icon.png">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="A Letter in the Scroll">
     <meta property="og:title" content="A Letter in the Scroll | Torah Study with Friends">
     <meta property="og:description" content="Join a chavruta, study Torah deeply, and grow together through weekly parsha learning.">
-    <meta property="og:image" content="https://sillybob123.github.io/media/images/Icon.png">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:height" content="800">
-    <meta property="og:image:alt" content="A Letter in the Scroll logo">
+    <meta property="og:image" content="https://sillybob123.github.io/media/images/chavruta-invite-card-1200x630.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="You've been invited to a Chavruta">
     <meta property="og:url" content="https://sillybob123.github.io/index.html">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="A Letter in the Scroll | Torah Study with Friends">
     <meta name="twitter:description" content="Join a chavruta, study Torah deeply, and grow together through weekly parsha learning.">
-    <meta name="twitter:image" content="https://sillybob123.github.io/media/images/Icon.png">
+    <meta name="twitter:image" content="https://sillybob123.github.io/media/images/chavruta-invite-card-1200x630.jpg">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -607,6 +609,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const inviteCodeFromUrl = sanitizeInviteCode(urlParams.get('invite') || '');
         const hasInviteParam = urlParams.has('invite');
+        const authModeFromUrl = (urlParams.get('auth') || '').toLowerCase();
         const inviteInput = document.getElementById('invite-code-input');
 
         if (hasInviteParam) {
@@ -713,6 +716,12 @@
                 createForm.classList.remove('hidden');
                 signinForm.classList.add('hidden');
             }
+        }
+
+        if (authModeFromUrl === 'create' || authModeFromUrl === 'signup' || authModeFromUrl === 'sign-up') {
+            switchTab('create');
+        } else if (authModeFromUrl === 'signin' || authModeFromUrl === 'login') {
+            switchTab('signin');
         }
 
         function showError(msg) {

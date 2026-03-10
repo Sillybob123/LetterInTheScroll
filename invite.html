@@ -7,23 +7,25 @@
     <meta name="description" content="You've been invited to join a chavruta on A Letter in the Scroll. Study Torah together with friends in a beautiful shared space.">
     <link rel="canonical" href="https://sillybob123.github.io/invite.html">
     <link rel="icon" type="image/png" href="media/images/Icon.png">
-    <link rel="apple-touch-icon" href="media/images/Icon.png">
-    <meta http-equiv="refresh" content="2; url=index.html">
+    <link rel="apple-touch-icon" sizes="180x180" href="media/images/Icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="media/images/Icon.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="media/images/Icon.png">
+    <meta http-equiv="refresh" content="2; url=join/index.html">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="A Letter in the Scroll">
     <meta property="og:title" content="You've Been Invited to Join a Chavruta">
     <meta property="og:description" content="Tap to join your study group and start learning Torah together.">
-    <meta property="og:image" content="https://sillybob123.github.io/media/images/Icon.png">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:height" content="800">
-    <meta property="og:image:alt" content="A Letter in the Scroll logo">
+    <meta property="og:image" content="https://sillybob123.github.io/media/images/chavruta-invite-card-1200x630.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="You've been invited to a Chavruta">
     <meta property="og:url" content="https://sillybob123.github.io/invite.html">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="You've Been Invited to Join a Chavruta">
     <meta name="twitter:description" content="Tap to join your study group and start learning Torah together.">
-    <meta name="twitter:image" content="https://sillybob123.github.io/media/images/Icon.png">
+    <meta name="twitter:image" content="https://sillybob123.github.io/media/images/chavruta-invite-card-1200x630.jpg">
 
     <style>
         :root {
@@ -121,7 +123,7 @@
         <h1>You've Been Invited to Join a Chavruta</h1>
         <p>Opening your invite now. Study Torah together, share insights, and grow with your learning group.</p>
         <div id="invite-code" class="code"></div>
-        <a id="open-link" class="cta" href="index.html">Open Invite</a>
+        <a id="open-link" class="cta" href="join/index.html">Open Invite</a>
         <p class="sub">If you are not redirected automatically, tap "Open Invite".</p>
     </main>
 
@@ -139,7 +141,7 @@
             }
 
             const code = sanitizeInviteCode(rawInvite);
-            const target = new URL('index.html', window.location.href);
+            const target = new URL('join/index.html', window.location.href);
 
             if (code.length === INVITE_CODE_LENGTH) {
                 target.searchParams.set('invite', code);

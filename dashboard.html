@@ -1672,7 +1672,7 @@
             const params = new URLSearchParams(window.location.search);
             const inviteCode = sanitizeInviteCode(params.get('invite') || '');
             if (inviteCode.length === INVITE_CODE_LENGTH) {
-                window.location.href = 'index.html?invite=' + encodeURIComponent(inviteCode);
+                window.location.href = 'join/index.html?invite=' + encodeURIComponent(inviteCode);
             } else {
                 window.location.href = 'index.html';
             }
@@ -1760,7 +1760,7 @@
     }
     function inviteLink(code) {
         const normalizedCode = sanitizeInviteCode(String(code || ''));
-        const url = new URL('invite.html', window.location.href);
+        const url = new URL('join/index.html', window.location.href);
         if (normalizedCode.length === INVITE_CODE_LENGTH) {
             url.searchParams.set('invite', normalizedCode);
         }
