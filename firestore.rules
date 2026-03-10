@@ -90,7 +90,8 @@ service cloud.firestore {
 
       // ─── REACTIONS (scoped to chavruta) ───
       match /reactions/{reactionId} {
-        allow read: if isChavrutaMember(chavrutaId);
+        allow read: if isChavrutaMember(chavrutaId) ||
+          (isAuth() && resource.data.userId == request.auth.uid);
 
         allow create: if isChavrutaMember(chavrutaId) &&
           request.resource.data.userId == request.auth.uid &&
@@ -105,7 +106,8 @@ service cloud.firestore {
 
       // ─── BOOKMARKS (scoped to chavruta) ───
       match /bookmarks/{bookmarkId} {
-        allow read: if isChavrutaMember(chavrutaId);
+        allow read: if isChavrutaMember(chavrutaId) ||
+          (isAuth() && resource.data.userId == request.auth.uid);
 
         allow create: if isChavrutaMember(chavrutaId) &&
           request.resource.data.userId == request.auth.uid;
@@ -128,7 +130,8 @@ service cloud.firestore {
 
       // ─── DAILY QUOTE BOOKMARKS (scoped to chavruta) ───
       match /dailyQuoteBookmarks/{bookmarkId} {
-        allow read: if isChavrutaMember(chavrutaId);
+        allow read: if isChavrutaMember(chavrutaId) ||
+          (isAuth() && resource.data.userId == request.auth.uid);
 
         allow create: if isChavrutaMember(chavrutaId) &&
           request.resource.data.userId == request.auth.uid;

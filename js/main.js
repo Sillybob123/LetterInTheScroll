@@ -80,7 +80,8 @@ import {
     updateMitzvahLeaderboard,
     recalculateMitzvahLeaderboard,
     getMitzvahLeaderboard,
-    formatTimeAgo
+    formatTimeAgo,
+    getActiveChavrutaId
 } from './firebase.js';
 
 import { collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -2596,16 +2597,20 @@ async function loadCommentCounts(parshaRef) {
     if (!isAuthReady) {
         return;
     }
-    
+    const chavrutaId = getActiveChavrutaId();
+    if (!chavrutaId) {
+        return; // No chavruta — skip comment counts (read-only mode)
+    }
+
     const { bookName, startChapter, startVerse, endChapter, endVerse } = parseParshaReference(parshaRef);
-    
+
     // Query full book range (lexicographic safe) and filter to parsha client-side
     const startRef = `${bookName} `;
     const endRef = `${bookName}~`;
-    
+
     try {
         const commentsQuery = query(
-            collection(db, 'comments'),
+            collection(db, 'chavrutas', chavrutaId, 'comments'),
             where('verseRef', '>=', startRef),
             where('verseRef', '<=', endRef)
         );
@@ -2670,9 +2675,11 @@ async function loadCommentCounts(parshaRef) {
 }
 
 async function updateCommentCount(verseRef) {
+    const chavrutaId = getActiveChavrutaId();
+    if (!chavrutaId) return;
     try {
         const commentsQuery = query(
-            collection(db, 'comments'),
+            collection(db, 'chavrutas', chavrutaId, 'comments'),
             where('verseRef', '==', verseRef)
         );
 
@@ -2694,6 +2701,7 @@ async function updateCommentCount(verseRef) {
 // ========================================
 
 async function loadBookmarkCounts(parshaRef) {
+    if (!getActiveChavrutaId()) return;
     const { bookName } = parseParshaReference(parshaRef);
 
     try {
@@ -2721,7 +2729,7 @@ async function loadBookmarkCounts(parshaRef) {
 // ========================================
 
 async function loadReactionCounts(parshaRef) {
-    if (!isAuthReady) {
+    if (!isAuthReady || !getActiveChavrutaId()) {
         return;
     }
 
@@ -2800,6 +2808,164 @@ async function handleReactionClick(verseRef, reactionType) {
     }
 }
 
+function updateHeaderUserDropdown(user, userProfile) {
+    const headerActions = document.getElementById('header-actions');
+    if (!headerActions) return;
+
+    let dropdownContainer = document.getElementById('header-user-dropdown-container');
+    const oldLogoutBtn = document.getElementById('logout-btn');
+
+    if (user) {
+        if (!dropdownContainer) {
+            // Remove the old logout button if it exists and hasn't been replaced
+            if (oldLogoutBtn && oldLogoutBtn.parentElement === headerActions) {
+                oldLogoutBtn.remove();
+            }
+
+            dropdownContainer = document.createElement('div');
+            dropdownContainer.id = 'header-user-dropdown-container';
+            dropdownContainer.className = 'relative flex items-center ml-2';
+            
+            // Get user's first name
+            let firstName = 'Account';
+            if (userProfile && userProfile.firstName) {
+                firstName = userProfile.firstName;
+            } else if (userProfile && userProfile.username) {
+                firstName = userProfile.username.split(' ')[0];
+            } else if (user.displayName) {
+                firstName = user.displayName.split(' ')[0];
+            }
+
+            const initial = firstName.charAt(0).toUpperCase();
+            const safeEmail = user.email || '';
+
+            // Pill button stays inside the header
+            dropdownContainer.innerHTML = `
+                <button id="header-user-menu-btn"
+                        class="header-user-pill"
+                        title="Account Menu"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    <div class="header-user-avatar" aria-hidden="true">${initial}</div>
+                    <span class="header-btn-text">${firstName}</span>
+                    <svg class="header-user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            `;
+            headerActions.appendChild(dropdownContainer);
+
+            // Dropdown panel + backdrop live on document.body so NO parent overflow can clip them
+            const backdrop = document.createElement('div');
+            backdrop.id = 'header-dropdown-backdrop';
+            backdrop.className = 'header-dropdown-backdrop';
+            document.body.appendChild(backdrop);
+
+            const dropdown = document.createElement('div');
+            dropdown.id = 'header-user-dropdown';
+            dropdown.className = 'header-dropdown';
+            dropdown.setAttribute('role', 'menu');
+            dropdown.setAttribute('aria-hidden', 'true');
+            dropdown.innerHTML = `
+                    <div class="header-dropdown-header">
+                        <div class="header-dropdown-avatar-lg" aria-hidden="true">${initial}</div>
+                        <div class="header-dropdown-user-info">
+                            <p class="header-dropdown-display-name">${firstName}</p>
+                            <p class="header-dropdown-email" title="${safeEmail}">${safeEmail}</p>
+                        </div>
+                    </div>
+                    <div class="header-dropdown-section">
+                        <a href="about.html" class="header-dropdown-item" role="menuitem">
+                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            About
+                        </a>
+                        <a href="bookmarks.html" id="my-bookmarks-btn" class="header-dropdown-item" role="menuitem">
+                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                            </svg>
+                            Bookmarks
+                        </a>
+                        <a href="settings.html" class="header-dropdown-item" role="menuitem">
+                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Account Settings
+                        </a>
+                    </div>
+                    <div class="header-dropdown-section">
+                        <button id="dropdown-logout-btn" class="header-dropdown-item header-dropdown-item--danger" role="menuitem">
+                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                            Sign Out
+                        </button>
+                    </div>
+            `;
+            document.body.appendChild(dropdown);
+
+            // Bind events
+            const menuBtn = dropdownContainer.querySelector('#header-user-menu-btn');
+            const newLogoutBtn = dropdown.querySelector('#dropdown-logout-btn');
+
+            function positionDropdown() {
+                const rect = menuBtn.getBoundingClientRect();
+                dropdown.style.top = (rect.bottom + 8) + 'px';
+                dropdown.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+            }
+
+            function openDrop() {
+                positionDropdown();
+                dropdown.classList.add('open');
+                backdrop.classList.add('open');
+                menuBtn.setAttribute('aria-expanded', 'true');
+                dropdown.setAttribute('aria-hidden', 'false');
+            }
+            function closeDrop() {
+                dropdown.classList.remove('open');
+                backdrop.classList.remove('open');
+                menuBtn.setAttribute('aria-expanded', 'false');
+                dropdown.setAttribute('aria-hidden', 'true');
+            }
+
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.contains('open') ? closeDrop() : openDrop();
+            });
+
+            backdrop.addEventListener('click', closeDrop);
+
+            document.addEventListener('click', (e) => {
+                if (!dropdownContainer.contains(e.target) && !dropdown.contains(e.target)) closeDrop();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeDrop();
+            });
+
+            newLogoutBtn.addEventListener('click', async () => {
+                try {
+                    if (typeof signOutUser === 'function') {
+                        await signOutUser();
+                        closeCommentsPanel(stopListeningForComments);
+                        hideInfoPanel();
+                        sessionStorage.removeItem('activeChavrutaId');
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Sign-out error:', error);
+                }
+            });
+        }
+    } else {
+        if (dropdownContainer) {
+            dropdownContainer.remove();
+        }
+    }
+}
+
 async function handleAuthStateChange(user) {
     updateCommentInputState(Boolean(user));
 
@@ -2827,6 +2993,9 @@ async function handleAuthStateChange(user) {
         }
 
         currentUserProfile = userProfile;
+
+        // Upgrade the header with a user profile dropdown
+        updateHeaderUserDropdown(user, userProfile);
 
         // Reflect latest login status in UI
         updateCurrentUserStatusDisplay(userProfile, user.email);
@@ -3407,13 +3576,17 @@ async function loadParsha(parshaRef) {
         highlightCurrentParsha(parshaRef);
 
         console.log('Loading counts (comments, reactions, bookmarks)...');
-        // Load both comments and reactions
-        await Promise.all([
-            loadCommentCounts(parshaRef),
-            loadReactionCounts(parshaRef),
-            loadBookmarkCounts(parshaRef)
-        ]);
-        console.log('✅ Counts loaded');
+        // Load social data — failures should not block verse display
+        try {
+            await Promise.all([
+                loadCommentCounts(parshaRef),
+                loadReactionCounts(parshaRef),
+                loadBookmarkCounts(parshaRef)
+            ]);
+            console.log('✅ Counts loaded');
+        } catch (countError) {
+            console.warn('Social counts unavailable (read-only mode):', countError.message);
+        }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
 

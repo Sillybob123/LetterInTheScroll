@@ -2020,7 +2020,12 @@
         `;
 
     const contentBox = container.querySelector('.daily-inspiration-content');
-    if (contentBox) {
+    const explicitTarget = container.querySelector('#quote-bookmark-target');
+
+    if (explicitTarget) {
+      explicitTarget.appendChild(btn);
+      btn.style.margin = '0'; // override any margin for explicit top-right positioning
+    } else if (contentBox) {
       const actions = document.createElement('div');
       actions.className = 'daily-inspiration-actions';
       actions.appendChild(btn);

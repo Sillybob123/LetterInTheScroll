@@ -629,21 +629,40 @@ async function isVerseBookmarked(userId, verseRef) {
   }
 }
 
+// Helper: get all chavruta IDs the current user belongs to
+// Helper: query a subcollection across all user's chavrutas
+async function queryAcrossChavrutas(userId, subcollectionName, constraints) {
+  const chavrutaIds = await getUserChavrutaIds(userId);
+  if (chavrutaIds.length === 0) return [];
+
+  const snapshots = await Promise.all(
+    chavrutaIds.map(cId => {
+      const ref = collection(db, 'chavrutas', cId, subcollectionName);
+      const q = constraints.length > 0 ? query(ref, ...constraints) : ref;
+      return getDocs(q).catch(() => null);
+    })
+  );
+
+  const docs = [];
+  snapshots.forEach(snap => {
+    if (!snap) return;
+    snap.forEach(docSnap => docs.push(docSnap));
+  });
+  return docs;
+}
+
 async function getUserBookmarks(userId) {
   if (!userId) {
     return [];
   }
 
   try {
-    const bookmarksQuery = query(
-      collectionGroup(db, 'bookmarks'),
+    const allDocs = await queryAcrossChavrutas(userId, 'bookmarks', [
       where('userId', '==', userId)
-    );
-
-    const querySnapshot = await getDocs(bookmarksQuery);
+    ]);
     const bookmarksByVerseRef = new Map();
 
-    querySnapshot.forEach((docSnap) => {
+    allDocs.forEach((docSnap) => {
       const data = docSnap.data();
       const verseRef = data.verseRef;
       if (!verseRef) {
@@ -840,15 +859,12 @@ async function getUserDailyQuoteBookmarks(userId) {
   }
 
   try {
-    const bookmarksQuery = query(
-      collectionGroup(db, 'dailyQuoteBookmarks'),
+    const allDocs = await queryAcrossChavrutas(userId, 'dailyQuoteBookmarks', [
       where('userId', '==', userId)
-    );
-
-    const querySnapshot = await getDocs(bookmarksQuery);
+    ]);
     const bookmarksByQuoteId = new Map();
 
-    querySnapshot.forEach((docSnapshot) => {
+    allDocs.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       const quoteIdValue = data.quoteId;
       if (quoteIdValue == null) {
@@ -896,18 +912,16 @@ async function getUserDailyQuoteBookmarks(userId) {
 
 async function getCommunityQuoteBookmarks(quoteId) {
   try {
-    const q = quoteId != null
-      ? query(
-          collectionGroup(db, 'dailyQuoteBookmarks'),
-          where('quoteId', '==', String(quoteId))
-        )
-      : collectionGroup(db, 'dailyQuoteBookmarks');
-    const querySnapshot = await getDocs(q);
+    const currentUserId = getCurrentUserId();
+    const constraints = quoteId != null
+      ? [where('quoteId', '==', String(quoteId))]
+      : [];
+    const allDocs = await queryAcrossChavrutas(currentUserId, 'dailyQuoteBookmarks', constraints);
 
     const quoteMap = new Map();
     const allUserIds = new Set();
 
-    querySnapshot.forEach((docSnapshot) => {
+    allDocs.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       const qid = data.quoteId != null ? String(data.quoteId) : '';
       if (!qid) return;
@@ -1004,13 +1018,12 @@ async function getDailyQuoteBookmarkCount(quoteId) {
     if (quoteId == null) {
       return 0;
     }
-    const q = query(
-      collectionGroup(db, 'dailyQuoteBookmarks'),
+    const currentUserId = getCurrentUserId();
+    const allDocs = await queryAcrossChavrutas(currentUserId, 'dailyQuoteBookmarks', [
       where('quoteId', '==', String(quoteId))
-    );
-    const snapshot = await getDocs(q);
+    ]);
     const uniqueUsers = new Set();
-    snapshot.forEach((docSnapshot) => {
+    allDocs.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       if (data.userId) {
         uniqueUsers.add(data.userId);
@@ -1028,26 +1041,13 @@ async function getDailyQuoteInteractors(quoteId) {
     if (quoteId == null) {
       return [];
     }
-    const q = query(
-      collectionGroup(db, 'dailyQuoteBookmarks'),
-      where('quoteId', '==', String(quoteId)),
-      orderBy('timestamp', 'desc'),
-      limit(60)
-    );
-    let snapshot;
-    try {
-      snapshot = await getDocs(q);
-    } catch (indexErr) {
-      const fallbackQ = query(
-        collectionGroup(db, 'dailyQuoteBookmarks'),
-        where('quoteId', '==', String(quoteId)),
-        limit(120)
-      );
-      snapshot = await getDocs(fallbackQ);
-    }
+    const currentUserId = getCurrentUserId();
+    const allDocs = await queryAcrossChavrutas(currentUserId, 'dailyQuoteBookmarks', [
+      where('quoteId', '==', String(quoteId))
+    ]);
 
     const latestByUser = new Map();
-    snapshot.forEach((docSnapshot) => {
+    allDocs.forEach((docSnapshot) => {
       const data = docSnapshot.data();
       if (data.userId) {
         const existing = latestByUser.get(data.userId);

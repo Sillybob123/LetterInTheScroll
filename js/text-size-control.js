@@ -102,7 +102,14 @@
             </div>
         `;
 
-        // Try desktop header actions first
+        // Try dedicated anchor below the header first (study page)
+        const anchor = document.getElementById('text-size-anchor');
+        if (anchor) {
+            anchor.appendChild(widget);
+            return widget;
+        }
+
+        // Try desktop header actions (fallback)
         const quickActions = document.getElementById('header-actions');
         if (quickActions) {
             quickActions.appendChild(widget);

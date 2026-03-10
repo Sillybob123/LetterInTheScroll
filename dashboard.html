@@ -10,97 +10,1213 @@
     <link rel="stylesheet" href="css/shabbat.css">
     <link rel="stylesheet" href="css/mobile-overrides.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f5f7fc; }
-        .font-heading { font-family: 'Cormorant Garamond', serif; }
-
-        /* ─── Header ─── */
-        .site-header { background: linear-gradient(138deg, #16285e 0%, #23408f 55%, #2f56ab 100%); }
-
-        /* ─── Decorative ─── */
-        .gold-line { height: 2px; background: linear-gradient(90deg, transparent, #c89a35, transparent); }
-
-        /* ─── Nav link ─── */
-        .nav-link {
-            color: rgba(255,255,255,0.75); font-size: 0.8125rem; font-weight: 500;
-            padding: 0.375rem 0.75rem; border-radius: 0.5rem;
-            transition: background 0.15s, color 0.15s; white-space: nowrap; text-decoration: none; display: inline-block;
+        :root {
+            --ink-950: #102039;
+            --ink-800: #1e3558;
+            --ink-700: #2c4a75;
+            --ink-600: #456188;
+            --ink-500: #667c9c;
+            --surface: #ffffff;
+            --surface-soft: #f7fbff;
+            --surface-glass: rgba(255, 255, 255, 0.82);
+            --line: rgba(25, 61, 108, 0.16);
+            --line-strong: rgba(25, 61, 108, 0.24);
+            --accent-navy: #1f3f76;
+            --accent-teal: #0f7b8f;
+            --accent-gold: #cf9a32;
+            --accent-mint: #2f9f84;
+            --danger: #b93e45;
+            --success: #25754f;
+            --radius-xl: 1.45rem;
+            --radius-lg: 1.05rem;
+            --shadow-xl: 0 24px 56px rgba(17, 44, 84, 0.17);
+            --shadow-lg: 0 12px 30px rgba(17, 44, 84, 0.11);
+            --shadow-sm: 0 4px 12px rgba(17, 44, 84, 0.07);
         }
-        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.12); }
 
-        /* ─── Section card ─── */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .dashboard-body {
+            font-family: 'Manrope', sans-serif !important;
+            color: var(--ink-950);
+            min-height: 100vh;
+            background:
+                radial-gradient(1200px 580px at -8% -10%, rgba(36, 118, 175, 0.20), transparent 60%),
+                radial-gradient(900px 560px at 108% -12%, rgba(209, 154, 53, 0.20), transparent 58%),
+                linear-gradient(180deg, #f4f8ff 0%, #f9f2e6 47%, #edf5ff 100%) !important;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .dashboard-body::before,
+        .dashboard-body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(76px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .dashboard-body::before {
+            width: 360px;
+            height: 360px;
+            background: rgba(25, 127, 175, 0.17);
+            top: 10vh;
+            right: -140px;
+        }
+
+        .dashboard-body::after {
+            width: 420px;
+            height: 420px;
+            background: rgba(207, 154, 50, 0.15);
+            bottom: -170px;
+            left: -130px;
+        }
+
+        .font-heading {
+            font-family: 'Fraunces', serif;
+        }
+
+        .fade-up {
+            animation: fadeUp 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fd1 { animation-delay: .04s; }
+        .fd2 { animation-delay: .1s; }
+        .fd3 { animation-delay: .16s; }
+        .fd4 { animation-delay: .22s; }
+        .fd5 { animation-delay: .28s; }
+
+        .spinner {
+            width: 34px;
+            height: 34px;
+            border: 3px solid rgba(31, 63, 118, 0.2);
+            border-top-color: var(--accent-teal);
+            border-radius: 50%;
+            animation: spin .72s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .dashboard-body .header-main {
+            background: linear-gradient(135deg, rgba(15, 29, 57, 0.95), rgba(27, 67, 108, 0.93));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 16px 40px rgba(9, 25, 51, 0.34);
+            backdrop-filter: blur(14px);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .dashboard-body .header-container {
+            max-width: 78rem;
+            margin: 0 auto;
+            padding: 0.95rem 1rem;
+        }
+
+        .dashboard-body .header-title {
+            font-family: 'Fraunces', serif;
+            letter-spacing: 0.018em;
+        }
+
+        .dashboard-body .header-subtitle {
+            color: rgba(222, 233, 252, 0.82);
+        }
+
+        .dashboard-body .header-btn {
+            border-radius: 0.8rem;
+            backdrop-filter: blur(4px);
+            transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+        .dashboard-body .header-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .dashboard-main {
+            width: min(78rem, 100% - 1.8rem);
+            margin: 1.35rem auto 2.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+        }
+
+        .dash-loading {
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: var(--surface-glass);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(9px);
+        }
+
+        .dash-loading-text {
+            font-size: 0.83rem;
+            letter-spacing: 0.01em;
+            color: var(--ink-600);
+            font-weight: 600;
+        }
+
         .section-card {
-            background: #fff; border-radius: 1.25rem;
-            border: 1px solid rgba(20,40,100,0.08);
-            box-shadow: 0 4px 20px rgba(22,40,94,0.07);
+            background: linear-gradient(170deg, rgba(255, 255, 255, 0.94), rgba(252, 254, 255, 0.87));
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(8px);
         }
 
-        /* ─── Chavruta card ─── */
+        #auto-join-inner {
+            border-radius: var(--radius-lg);
+            padding: 0.8rem 1.05rem;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(4px);
+        }
+
+        #auto-join-message {
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+        }
+
+        #daily-inspiration {
+            position: relative;
+            overflow: hidden;
+            border-radius: calc(var(--radius-xl) + 0.2rem);
+            background: linear-gradient(130deg, #122746 0%, #153960 42%, #0f6075 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            box-shadow: 0 22px 52px rgba(16, 39, 74, 0.3);
+            isolation: isolate;
+            color: #eff6ff;
+        }
+
+        #daily-inspiration::before,
+        #daily-inspiration::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #daily-inspiration::before {
+            inset: 0;
+            background:
+                radial-gradient(800px 320px at 90% 0%, rgba(214, 169, 74, 0.18), transparent 62%),
+                radial-gradient(630px 280px at 0% 100%, rgba(86, 171, 210, 0.16), transparent 58%);
+        }
+
+        #daily-inspiration::after {
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            top: -260px;
+            right: -170px;
+        }
+
+        .dash-hero-deco {
+            position: absolute;
+            top: -1.6rem;
+            right: 0.35rem;
+            font-family: 'Fraunces', serif;
+            font-size: clamp(6.4rem, 14vw, 11.4rem);
+            line-height: 1;
+            color: rgba(255, 255, 255, 0.05);
+            user-select: none;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #daily-inspiration .daily-inspiration-content {
+            position: relative;
+            z-index: 3;
+            margin: 0;
+            border: 1px solid rgba(219, 235, 255, 0.22);
+            border-radius: calc(var(--radius-xl) - 0.2rem);
+            background: linear-gradient(146deg, rgba(14, 31, 59, 0.58), rgba(19, 74, 94, 0.52));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: clamp(1.3rem, 3.1vw, 2.15rem) clamp(1.1rem, 4vw, 2.6rem);
+            transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+        }
+
+        .dash-hero-eyebrow {
+            font-size: 0.66rem;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-weight: 800;
+            color: #f4c96f;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .dash-hero-eyebrow::before {
+            content: '';
+            width: 1.65rem;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #f4c96f, transparent);
+        }
+
+        .dash-hero-hebrew {
+            font-size: clamp(1.15rem, 2.8vw, 1.95rem);
+            direction: rtl;
+            line-height: 1.72;
+            color: #f7fbff;
+            margin-bottom: 0.85rem;
+            font-family: 'Fraunces', serif;
+        }
+
+        .dash-hero-translation {
+            margin-bottom: 1rem;
+            padding-left: 0.9rem;
+            border-left: 2px solid rgba(244, 201, 111, 0.52);
+            font-size: 0.91rem;
+            line-height: 1.68;
+            color: rgba(230, 242, 255, 0.93);
+            font-style: italic;
+        }
+
+        .dash-hero-reflection-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            border-radius: 0.86rem;
+            border: 1px solid rgba(191, 220, 255, 0.16);
+            background: rgba(12, 28, 53, 0.34);
+            padding: 0.75rem 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .dash-hero-reflection-icon {
+            width: 0.9rem;
+            height: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+            color: rgba(244, 201, 111, 0.78);
+        }
+
+        .dash-hero-reflection {
+            font-size: 0.8rem;
+            line-height: 1.68;
+            color: rgba(224, 238, 255, 0.9);
+        }
+
+        .dash-hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.62rem;
+            flex-wrap: wrap;
+        }
+
+        .dash-community-line {
+            margin-top: 0.78rem;
+            font-size: 0.73rem;
+            font-weight: 600;
+            line-height: 1.55;
+            color: rgba(218, 234, 255, 0.86);
+            letter-spacing: 0.01em;
+        }
+
+        .dash-hero-source {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.61rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #f4c96f;
+            border: 1px solid rgba(244, 201, 111, 0.34);
+            background: rgba(255, 223, 153, 0.11);
+            border-radius: 999px;
+            padding: 0.25rem 0.76rem;
+            white-space: nowrap;
+        }
+
+        #quote-bookmark-target {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        #daily-inspiration .daily-quote-bookmark-btn {
+            border-color: rgba(176, 220, 255, 0.42) !important;
+            background: rgba(20, 63, 95, 0.5) !important;
+            color: #d9ecff !important;
+            box-shadow: 0 8px 14px rgba(5, 24, 42, 0.24) !important;
+        }
+
+        #daily-inspiration .daily-quote-bookmark-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(31, 90, 133, 0.66) !important;
+            color: #ffffff !important;
+        }
+
+        #daily-inspiration .daily-quote-bookmark-btn.is-active {
+            background: rgba(243, 194, 95, 0.24) !important;
+            color: #ffe3a3 !important;
+            border-color: rgba(243, 194, 95, 0.54) !important;
+        }
+
+        .dash-welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+            flex-wrap: wrap;
+            padding: 1.08rem 1.1rem;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.93), rgba(247, 252, 255, 0.89));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dash-welcome-left {
+            display: flex;
+            align-items: center;
+            gap: 0.82rem;
+            min-width: 0;
+        }
+
+        .dash-avatar {
+            width: 2.7rem;
+            height: 2.7rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+            background: linear-gradient(135deg, var(--accent-navy), var(--accent-teal));
+            box-shadow: 0 8px 16px rgba(17, 62, 103, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.92);
+            flex-shrink: 0;
+        }
+
+        .dash-welcome-name {
+            font-size: clamp(1rem, 2vw, 1.16rem);
+            font-weight: 800;
+            color: var(--ink-900);
+            letter-spacing: 0.01em;
+        }
+
+        .dash-welcome-sub {
+            margin-top: 0.12rem;
+            font-size: 0.79rem;
+            color: var(--ink-600);
+            font-weight: 600;
+        }
+
+        .dash-welcome-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.48rem;
+        }
+
+        .dash-btn-primary {
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.42rem;
+            padding: 0.63rem 1.08rem;
+            border-radius: 0.78rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.015em;
+            color: #f7fbff;
+            background: linear-gradient(140deg, var(--accent-navy), #23679b);
+            box-shadow: 0 10px 20px rgba(16, 47, 89, 0.22);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .dash-btn-primary:hover {
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 14px 24px rgba(16, 47, 89, 0.27);
+        }
+
+        .dash-btn-icon {
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 0.76rem;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--ink-600);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform .2s ease, color .2s ease, border-color .2s ease, background .2s ease;
+        }
+
+        .dash-btn-icon:hover {
+            color: var(--ink-800);
+            border-color: rgba(30, 53, 88, 0.34);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+
+        .dash-section-shell {
+            padding: 1.22rem 1.18rem;
+        }
+
+        .dash-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.05rem;
+        }
+
+        .dash-section-title-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-width: 0;
+        }
+
+        .dash-section-bar {
+            width: 0.24rem;
+            height: 1.3rem;
+            border-radius: 999px;
+            background: linear-gradient(180deg, var(--accent-teal), var(--accent-gold));
+            box-shadow: 0 0 0 1px rgba(19, 73, 115, 0.12);
+            flex-shrink: 0;
+        }
+
+        .dash-section-title {
+            font-size: clamp(1rem, 2.5vw, 1.22rem);
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            color: var(--ink-900);
+        }
+
+        .dash-count-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.55rem;
+            padding: 0.2rem 0.64rem;
+            border-radius: 999px;
+            border: 1px solid rgba(31, 63, 118, 0.21);
+            background: rgba(232, 243, 255, 0.9);
+            color: var(--ink-700);
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .dash-tab-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.22rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--line);
+            background: rgba(242, 248, 255, 0.92);
+        }
+
+        .ptab {
+            border: 1px solid transparent;
+            border-radius: 0.68rem;
+            padding: 0.45rem 0.92rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            color: var(--ink-600);
+            background: transparent;
+            transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+            cursor: pointer;
+        }
+
+        .ptab:hover:not(.active) {
+            color: var(--ink-800);
+            background: rgba(255, 255, 255, 0.68);
+        }
+
+        .ptab.active {
+            color: var(--ink-900);
+            background: #ffffff;
+            border-color: rgba(31, 63, 118, 0.2);
+            box-shadow: 0 6px 12px rgba(20, 49, 86, 0.12);
+        }
+
+        .dash-panel-shell {
+            margin-bottom: 1.1rem;
+            border-radius: 0.96rem;
+            border: 1px solid rgba(31, 63, 118, 0.14);
+            background: linear-gradient(150deg, rgba(245, 251, 255, 0.96), rgba(255, 252, 246, 0.93));
+            padding: 1rem;
+        }
+
+        .dash-panel-note {
+            font-size: 0.8rem;
+            line-height: 1.56;
+            color: var(--ink-600);
+            font-weight: 600;
+            margin-bottom: 0.68rem;
+        }
+
+        .dash-form-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.62rem;
+        }
+
+        .dash-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.58rem;
+            align-items: center;
+        }
+
+        .dash-input,
+        .dash-select {
+            border: 1px solid rgba(30, 67, 111, 0.22);
+            border-radius: 0.72rem;
+            background: rgba(255, 255, 255, 0.96);
+            color: var(--ink-900);
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.2;
+            padding: 0.64rem 0.86rem;
+            transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+        }
+
+        .dash-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .dash-select {
+            min-width: 8.9rem;
+            padding-right: 2.5rem;
+        }
+
+        .dash-input:focus,
+        .dash-select:focus {
+            border-color: rgba(17, 123, 143, 0.72);
+            box-shadow: 0 0 0 4px rgba(15, 123, 143, 0.12);
+            outline: none;
+        }
+
+        .dash-submit-btn {
+            border: 0;
+            border-radius: 0.72rem;
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.015em;
+            padding: 0.64rem 1.14rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .2s ease, filter .2s ease;
+        }
+
+        .dash-submit-btn:hover {
+            transform: translateY(-1px);
+            filter: saturate(1.05);
+        }
+
+        .dash-submit-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .dash-submit-btn-create {
+            background: linear-gradient(140deg, var(--accent-navy), #276f9f);
+            box-shadow: 0 10px 18px rgba(20, 52, 92, 0.24);
+        }
+
+        .dash-submit-btn-join {
+            background: linear-gradient(140deg, #7f6420, var(--accent-gold));
+            box-shadow: 0 10px 18px rgba(113, 87, 28, 0.22);
+        }
+
+        .dash-feedback {
+            margin-top: 0.8rem;
+            padding: 0.72rem 0.82rem;
+            border-radius: 0.8rem;
+            border: 1px solid transparent;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            font-weight: 700;
+        }
+
+        .dash-feedback--info {
+            background: rgba(225, 240, 255, 0.84);
+            border-color: rgba(77, 117, 180, 0.26);
+            color: #1f4e84;
+        }
+
+        .dash-feedback--success {
+            background: rgba(221, 248, 236, 0.87);
+            border-color: rgba(48, 142, 95, 0.32);
+            color: var(--success);
+        }
+
+        .dash-feedback--error {
+            background: rgba(255, 233, 234, 0.9);
+            border-color: rgba(185, 62, 69, 0.34);
+            color: var(--danger);
+        }
+
+        .dash-share-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.48rem;
+            margin-top: 0.58rem;
+        }
+
+        .dash-share-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .dash-share-label {
+            width: 2.7rem;
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+            color: #4b6692;
+        }
+
+        .dash-code-output,
+        .dash-link-output {
+            border: 1px solid rgba(72, 108, 164, 0.26);
+            border-radius: 0.56rem;
+            background: #ffffff;
+            color: #21497a;
+            min-height: 2.1rem;
+            padding: 0.46rem 0.62rem;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .dash-code-output {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .dash-link-output {
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .dash-copy-btn {
+            border: 1px solid rgba(69, 97, 136, 0.3);
+            background: #ffffff;
+            color: #2a4f84;
+            border-radius: 0.56rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.42rem 0.68rem;
+            cursor: pointer;
+            transition: background .18s ease, color .18s ease, transform .18s ease;
+        }
+
+        .dash-copy-btn:hover {
+            background: #eff5ff;
+            color: #173f6d;
+        }
+
+        .dash-copy-btn:active {
+            transform: scale(.97);
+        }
+
+        .dash-empty-state {
+            padding: 3rem 1.1rem;
+            text-align: center;
+        }
+
+        .dash-empty-icon {
+            width: 3.3rem;
+            height: 3.3rem;
+            border-radius: 1rem;
+            margin: 0 auto 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, rgba(18, 83, 134, 0.12), rgba(206, 152, 45, 0.16));
+            color: #22558f;
+            border: 1px solid rgba(34, 85, 143, 0.18);
+        }
+
+        .dash-empty-title {
+            font-size: 1.14rem;
+            color: var(--ink-900);
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .dash-empty-copy {
+            max-width: 360px;
+            margin: 0 auto;
+            color: var(--ink-600);
+            font-size: 0.81rem;
+            line-height: 1.55;
+        }
+
+        #chavrutas-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.95rem;
+        }
+
+        @media (min-width: 700px) {
+            #chavrutas-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1280px) {
+            #chavrutas-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
         .chavruta-card {
-            background: #fff; border-radius: 1.25rem;
-            border: 1px solid rgba(20,40,100,0.09);
-            box-shadow: 0 4px 16px rgba(22,40,94,0.07);
-            transition: transform 0.25s ease, box-shadow 0.25s ease; overflow: hidden;
+            border-radius: 1.2rem;
+            border: 1px solid var(--line) !important;
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: transform .24s ease, box-shadow .24s ease;
         }
-        .chavruta-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(22,40,94,0.13); }
 
-        /* ─── Explore grid card ─── */
-        .explore-card {
-            background: #fff; border-radius: 1.25rem;
-            border: 1px solid rgba(20,40,100,0.08);
-            box-shadow: 0 4px 14px rgba(22,40,94,0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            padding: 1.75rem 1.25rem; text-decoration: none;
+        .chavruta-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 28px rgba(19, 48, 83, 0.16);
         }
-        .explore-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(22,40,94,0.12); }
 
-        /* ─── Settings panel ─── */
-        .settings-panel { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s; opacity: 0; }
-        .settings-panel.open { max-height: 1000px; opacity: 1; }
+        .chavruta-card > div:first-child {
+            background: linear-gradient(136deg, #153260 0%, #176a89 100%) !important;
+        }
 
-        /* ─── Animations ─── */
-        .fade-up { animation: fadeUp 0.45s ease-out both; }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        .fd1{animation-delay:.05s} .fd2{animation-delay:.1s} .fd3{animation-delay:.15s} .fd4{animation-delay:.2s}
+        .settings-panel {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height .32s ease, opacity .24s ease;
+        }
 
-        /* ─── Spinner ─── */
-        .spinner { width:30px; height:30px; border:3px solid #dde3f0; border-top-color:#c89a35; border-radius:50%; animation:spin 0.7s linear infinite; }
-        @keyframes spin { to { transform:rotate(360deg); } }
+        .settings-panel.open {
+            max-height: 1300px;
+            opacity: 1;
+        }
 
-        /* ─── Panel toggle tabs ─── */
-        .ptab { cursor:pointer; padding:0.45rem 1rem; border-radius:0.5rem; font-size:0.8rem; font-weight:600; transition:all 0.15s; border:1.5px solid transparent; }
-        .ptab.active { background:#fff; border-color:rgba(22,40,94,0.15); color:#16285e; box-shadow:0 2px 8px rgba(22,40,94,0.08); }
-        .ptab:not(.active) { color:#6b7280; }
-        .ptab:not(.active):hover { color:#374151; background:rgba(0,0,0,0.04); }
+        .stab {
+            flex: 1;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #6d7f9e;
+            padding: 0.44rem;
+            cursor: pointer;
+            transition: color .18s ease, border-color .18s ease;
+        }
 
-        /* ─── Settings sub-tabs ─── */
-        .stab { flex:1; text-align:center; padding:0.5rem; font-size:0.72rem; font-weight:600; color:#6b7280; border-bottom:2px solid transparent; cursor:pointer; transition:all 0.15s; }
-        .stab.active { color:#16285e; border-bottom-color:#c89a35; }
-        .stab:hover:not(.active) { color:#374151; }
+        .stab.active {
+            color: #163864;
+            border-bottom-color: rgba(23, 106, 137, 0.65);
+        }
 
-        /* ─── Mobile nav ─── */
-        .mobile-menu { display:none; }
-        .mobile-menu.open { display:block; }
+        .mono-code {
+            font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+            letter-spacing: 0.12em;
+        }
 
-        /* ─── Mono / avatar ─── */
-        .mono-code { font-family:'Menlo','Courier New',monospace; letter-spacing:0.1em; }
-        .av { width:2rem; height:2rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; color:#fff; border:2px solid #fff; }
-        .av-ring { width:2.1rem; height:2.1rem; border-radius:50%; padding:2px; background:linear-gradient(135deg,#c89a35,#16285e); }
-        .av-inner { width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.7rem; color:#fff; }
+        .av {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.92);
+        }
+
+        .av-ring {
+            width: 2.15rem;
+            height: 2.15rem;
+            border-radius: 999px;
+            padding: 2px;
+            background: linear-gradient(145deg, #c7a13f, #1d4b75);
+        }
+
+        .av-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 0.71rem;
+            font-weight: 800;
+        }
+
+        .dash-explore-grid {
+            display: grid;
+            gap: 0.72rem;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @media (min-width: 680px) {
+            .dash-explore-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1060px) {
+            .dash-explore-grid {
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+            }
+        }
+
+        .dash-explore-card {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0.18rem;
+            text-decoration: none;
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            min-height: 118px;
+            background: linear-gradient(150deg, rgba(255, 255, 255, 0.95), rgba(245, 251, 255, 0.88));
+            box-shadow: var(--shadow-sm);
+            padding: 0.95rem 0.64rem;
+            transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+        }
+
+        .dash-explore-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 26px rgba(17, 50, 89, 0.14);
+            border-color: var(--line-strong);
+        }
+
+        .dash-explore-card::before {
+            content: '';
+            position: absolute;
+            inset: auto -10% -58% -10%;
+            height: 75%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.5), transparent 70%);
+            pointer-events: none;
+            opacity: 0.65;
+        }
+
+        .dash-explore-icon {
+            width: 2.65rem;
+            height: 2.65rem;
+            border-radius: 0.84rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 18px rgba(17, 52, 88, 0.16);
+            transition: transform .24s ease;
+            margin-bottom: 0.35rem;
+        }
+
+        .dash-explore-card:hover .dash-explore-icon {
+            transform: translateY(-2px) scale(1.06);
+        }
+
+        .dash-explore-label {
+            font-size: 0.79rem;
+            font-weight: 800;
+            color: var(--ink-900);
+            letter-spacing: 0.01em;
+            text-wrap: balance;
+        }
+
+        .dash-explore-sub {
+            font-size: 0.67rem;
+            color: var(--ink-600);
+            font-weight: 600;
+            text-wrap: balance;
+        }
+
+        .tone-study .dash-explore-icon {
+            background: linear-gradient(145deg, #d8e8ff, #eef5ff);
+            color: #1c4f95;
+        }
+
+        .tone-holiday .dash-explore-icon {
+            background: linear-gradient(145deg, #ffe8c2, #fff4df);
+            color: #9a5a06;
+        }
+
+        .tone-prayer .dash-explore-icon {
+            background: linear-gradient(145deg, #d8ffe8, #effff5);
+            color: #177552;
+        }
+
+        .tone-songs .dash-explore-icon {
+            background: linear-gradient(145deg, #ffe3dc, #fff1ee);
+            color: #ad4a27;
+        }
+
+        .tone-about .dash-explore-icon {
+            background: linear-gradient(145deg, #f6ead2, #fff9ee);
+            color: #8e6a26;
+        }
+
+        .tone-bookmarks .dash-explore-icon {
+            background: linear-gradient(145deg, #dce8f6, #eef4ff);
+            color: #2a5a8e;
+        }
+
+        .dash-footer-quote {
+            margin-top: 0.1rem;
+            margin-bottom: 0.22rem;
+            text-align: center;
+            color: #5f6f88;
+            font-size: 0.91rem;
+            line-height: 1.68;
+            font-style: italic;
+            font-family: 'Fraunces', serif;
+            text-wrap: balance;
+            padding: 0 0.4rem;
+            opacity: 0.93;
+        }
+
+        .dash-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(6, 16, 32, 0.52);
+            backdrop-filter: blur(6px);
+            z-index: 70;
+        }
+
+        .dash-modal-card {
+            width: min(100%, 450px);
+            border-radius: 1.25rem;
+            border: 1px solid var(--line);
+            background: #ffffff;
+            box-shadow: 0 20px 44px rgba(15, 35, 62, 0.26);
+            padding: 1.25rem;
+        }
+
+        .dash-modal-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--ink-950);
+            margin-bottom: 0.24rem;
+        }
+
+        .dash-modal-sub {
+            font-size: 0.84rem;
+            color: var(--ink-600);
+            line-height: 1.58;
+        }
+
+        .dash-modal-actions {
+            display: flex;
+            gap: 0.55rem;
+            margin-top: 1.15rem;
+        }
+
+        .dash-modal-btn {
+            flex: 1;
+            border-radius: 0.8rem;
+            padding: 0.62rem 0.8rem;
+            font-size: 0.79rem;
+            font-weight: 800;
+            border: 1px solid rgba(30, 53, 88, 0.2);
+            background: #ffffff;
+            color: var(--ink-700);
+            transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+        }
+
+        .dash-modal-btn:hover {
+            transform: translateY(-1px);
+            background: #f2f8ff;
+            border-color: rgba(30, 53, 88, 0.28);
+        }
+
+        .dash-modal-btn-danger {
+            border: 1px solid rgba(185, 62, 69, 0.28);
+            background: linear-gradient(145deg, #ba3f46, #ab353d);
+            color: #ffffff;
+        }
+
+        .dash-modal-btn-danger:hover {
+            background: linear-gradient(145deg, #c6474e, #b43840);
+        }
+
+        .dash-modal-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 0.15rem;
+        }
+
+        .dash-inline-icon {
+            width: 0.96rem;
+            height: 0.96rem;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-main {
+                width: min(74rem, 100% - 1rem);
+                margin-top: 1rem;
+            }
+
+            .dash-section-shell {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-body .header-container {
+                padding-left: 0.7rem;
+                padding-right: 0.7rem;
+            }
+
+            .dashboard-main {
+                width: calc(100% - 0.8rem);
+                margin-bottom: 1.6rem;
+                gap: 0.9rem;
+            }
+
+            .dashboard-stack {
+                gap: 0.9rem;
+            }
+
+            #daily-inspiration .daily-inspiration-content {
+                padding: 1rem 0.86rem;
+            }
+
+            .dash-hero-translation {
+                font-size: 0.84rem;
+            }
+
+            .dash-hero-reflection {
+                font-size: 0.75rem;
+            }
+
+            .dash-welcome {
+                padding: 0.92rem;
+            }
+
+            .dash-btn-primary {
+                padding: 0.58rem 0.86rem;
+            }
+
+            .dash-input,
+            .dash-select {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .dash-submit-btn {
+                width: 100%;
+            }
+
+            .dash-share-row {
+                grid-template-columns: 1fr;
+                gap: 0.36rem;
+            }
+
+            .dash-share-label {
+                width: auto;
+            }
+
+            .dash-modal-card {
+                padding: 1rem;
+            }
+
+            .dash-modal-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-up,
+            .spinner,
+            .dash-btn-primary,
+            .dash-btn-icon,
+            .dash-explore-card,
+            .dash-explore-icon,
+            .chavruta-card,
+            .dash-submit-btn,
+            .dash-copy-btn,
+            .dash-modal-btn,
+            .header-btn {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="dashboard-body min-h-screen">
 
 <!-- ═══ HEADER ═══ -->
 <header class="header-main relative z-30">
     <div class="header-container">
         <div class="header-branding-section">
-            <a id="home-branding" href="dashboard.html" aria-label="Go to dashboard home" class="header-branding-button" style="text-decoration:none">
+            <a id="home-branding" href="dashboard.html" aria-label="Go to dashboard home" class="header-branding-button">
                 <div class="header-text">
                     <h1 class="header-title">A Letter in the Scroll</h1>
-                    <p class="header-subtitle">Interactive Weekly Portion Study & Discussion</p>
+                    <p class="header-subtitle">Interactive Weekly Portion Study &amp; Discussion</p>
                 </div>
             </a>
         </div>
@@ -140,289 +1256,257 @@
                     </svg>
                     <span class="header-btn-text">Songs</span>
                 </a>
-                <a href="about.html" class="header-btn header-btn-secondary" title="About this project">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="header-btn-text">About</span>
-                </a>
-                <a id="my-bookmarks-btn" href="bookmarks.html" class="header-btn header-btn-secondary" title="View your saved verses">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                    </svg>
-                    <span class="header-btn-text">Bookmarks</span>
-                </a>
-                <span id="user-greeting" class="header-btn header-btn-secondary hidden lg:inline-flex cursor-default pointer-events-none"></span>
-                <button id="logout-btn" onclick="signOutUser()" class="header-btn header-btn-secondary" title="Sign out">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                    <span class="header-btn-text">Sign Out</span>
-                </button>
+
+                <!-- User dropdown built by onAuthStateChanged below -->
             </div>
         </div>
     </div>
 </header>
 
-
 <!-- ═══ MAIN ═══ -->
-<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
-
-    <!-- Loading -->
-    <div id="loading-state" class="flex flex-col items-center justify-center py-24 gap-3">
+<main class="dashboard-main">
+    <div id="loading-state" class="dash-loading">
         <div class="spinner"></div>
-        <p class="text-sm text-slate-400">Loading your home…</p>
+        <p class="dash-loading-text">Loading your home...</p>
     </div>
 
-    <!-- Content (hidden until auth) -->
-    <div id="main-content" class="hidden space-y-10">
-
-        <!-- Banner -->
-        <div id="auto-join-banner" class="hidden">
-            <div id="auto-join-inner" class="bg-green-50 border border-green-200 rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-sm">
-                <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                <span id="auto-join-message" class="text-sm font-medium"></span>
+    <div id="main-content" class="hidden dashboard-stack">
+        <section id="auto-join-banner" class="hidden fade-up fd1">
+            <div id="auto-join-inner">
+                <svg class="dash-inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span id="auto-join-message"></span>
             </div>
-        </div>
+        </section>
 
-        <!-- ── DAILY INSPIRATION (MINIMAL & ELEGANT) ── -->
         <section id="daily-inspiration" class="fade-up fd1">
-            <div class="bg-white rounded-2xl border border-slate-200/60 p-5 sm:p-6 shadow-sm relative overflow-hidden flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-                <!-- Subtle decorative background element -->
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-amber-50 rounded-full blur-2xl pointer-events-none"></div>
-
-                <div class="w-10 h-10 shrink-0 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center border border-blue-100 shadow-sm">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <div class="dash-hero-deco" aria-hidden="true">ת</div>
+            <div class="dash-hero-inner daily-inspiration-content">
+                <div class="dash-hero-eyebrow">Today's Teaching</div>
+                <p data-quote-hebrew class="dash-hero-hebrew"></p>
+                <p data-quote-translation class="dash-hero-translation"></p>
+                <div class="dash-hero-reflection-box">
+                    <svg class="dash-hero-reflection-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                    <p data-quote-reflection class="dash-hero-reflection"></p>
                 </div>
-                
-                <div class="flex-1 min-w-0">
-                    <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3 mb-1.5">
-                        <p data-quote-hebrew class="text-base sm:text-lg font-serif text-slate-800 tracking-wide" style="direction:rtl; font-family: 'David', 'Times New Roman', serif;">Loading today's teaching...</p>
-                        <span data-quote-source class="text-[0.65rem] font-bold uppercase tracking-wider text-amber-600/80 bg-amber-50 px-2 py-0.5 rounded border border-amber-100/50 whitespace-nowrap"></span>
-                    </div>
-                    <p data-quote-translation class="text-sm text-slate-600 font-medium leading-relaxed mb-2.5">...</p>
-                    <div class="flex items-start gap-2 bg-slate-50 border border-slate-100 rounded-lg p-2.5">
-                        <svg class="w-3.5 h-3.5 mt-0.5 text-amber-500/70 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
-                        <p data-quote-reflection class="text-xs text-slate-500 leading-relaxed italic">Reflection will appear here.</p>
-                    </div>
+                <div class="dash-hero-actions">
+                    <span data-quote-source class="dash-hero-source"></span>
+                    <div id="quote-bookmark-target"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ── WELCOME HEADER (COMPACT) ── -->
-        <section class="fade-up fd2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-4 sm:px-6 sm:py-4 shadow-sm">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold border border-blue-200 shadow-sm shrink-0" id="user-avatar-initial"></div>
+        <section class="dash-welcome fade-up fd2">
+            <div class="dash-welcome-left">
+                <div id="user-avatar-initial" class="dash-avatar"></div>
                 <div>
-                    <h1 id="welcome-heading" class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Shalom!</h1>
-                    <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Choose a study group below, or explore the navigation above.</p>
+                    <h1 id="welcome-heading" class="dash-welcome-name">Shalom!</h1>
+                    <p class="dash-welcome-sub">Choose a study group below, or explore the site.</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-                <a id="hero-study-btn" href="study.html" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-white shadow hover:shadow-md transition-all text-xs hover:-translate-y-0.5" style="background:linear-gradient(135deg,#16285e,#2f56ab)">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    Enter Room
+            <div class="dash-welcome-actions">
+                <a id="hero-study-btn" href="study.html" class="dash-btn-primary">
+                    <svg class="dash-inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Enter Study Room
                 </a>
-                <a href="settings.html" class="p-2.5 text-slate-400 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 rounded-xl transition-colors border border-slate-100" title="Account Settings">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <a href="settings.html" class="dash-btn-icon" title="Account Settings">
+                    <svg class="dash-inline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </a>
             </div>
         </section>
 
-        <!-- ── MY STUDY GROUPS ── -->
-        <section class="fade-up fd2">
-            <!-- Section header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-1 h-7 rounded-full" style="background:#c89a35"></div>
-                    <h2 class="text-xl font-bold text-slate-800">My Study Groups</h2>
-                    <span id="chavruta-count" class="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full"></span>
+        <section class="section-card dash-section-shell fade-up fd3">
+            <div class="dash-section-header">
+                <div class="dash-section-title-row">
+                    <div class="dash-section-bar"></div>
+                    <h2 class="dash-section-title">My Study Groups</h2>
+                    <span id="chavruta-count" class="dash-count-pill"></span>
                 </div>
-                <!-- Create / Join tabs -->
-                <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1 self-start sm:self-auto">
+                <div class="dash-tab-group">
                     <button class="ptab active" id="ptab-create" onclick="showPanel('create')">+ New Group</button>
                     <button class="ptab" id="ptab-join" onclick="showPanel('join')">Join with Code</button>
                 </div>
             </div>
 
-            <!-- Create / Join inline panel -->
-            <div class="section-card p-5 sm:p-6 mb-6">
-                <!-- Create -->
+            <div class="dash-panel-shell">
                 <div id="pp-create">
-                    <p class="text-sm text-slate-500 mb-3">Give your group a name and choose a size. You'll get a shareable invite code right away.</p>
-                    <form id="create-form" onsubmit="createChavruta(event)" class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="create-name" minlength="2" maxlength="50" required placeholder="Group name (e.g. Shabbat Morning)"
-                            class="flex-1 px-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-slate-800">
-                        <select id="create-max-members" class="px-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm bg-white text-slate-700 focus:border-blue-500 focus:outline-none transition-all">
-                            <option value="2">2 people</option><option value="3">3 people</option><option value="4">4 people</option>
-                            <option value="5">5 people</option><option value="6">6 people</option><option value="7">7 people</option>
-                            <option value="8" selected>8 people</option><option value="10">10 people</option><option value="12">12 people</option>
-                        </select>
-                        <button type="submit" id="create-btn" class="px-6 py-2.5 text-sm font-bold text-white rounded-xl shadow hover:shadow-lg transition-all whitespace-nowrap" style="background:linear-gradient(135deg,#16285e,#2f56ab)">
-                            Create Group
-                        </button>
+                    <p class="dash-panel-note">Give your group a name and choose a size. You'll get a shareable invite code right away.</p>
+                    <form id="create-form" onsubmit="createChavruta(event)" class="dash-form-stack">
+                        <div class="dash-form-row">
+                            <input type="text" id="create-name" minlength="2" maxlength="50" required placeholder="Group name (e.g. Shabbat Morning)" class="dash-input">
+                            <select id="create-max-members" class="dash-select">
+                                <option value="2">2 people</option><option value="3">3 people</option><option value="4">4 people</option>
+                                <option value="5">5 people</option><option value="6">6 people</option><option value="7">7 people</option>
+                                <option value="8" selected>8 people</option><option value="10">10 people</option><option value="12">12 people</option>
+                            </select>
+                            <button type="submit" id="create-btn" class="dash-submit-btn dash-submit-btn-create">Create Group</button>
+                        </div>
                     </form>
-                    <!-- success -->
-                    <div id="create-success" class="hidden mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                        <p class="text-sm font-bold text-blue-800 mb-3">Group created. Share this with your friends:</p>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 w-10 shrink-0">Code</span>
-                                <code id="created-invite-code" class="flex-1 mono-code text-sm font-bold text-blue-900 bg-white px-3 py-1.5 rounded-lg border border-blue-200 select-all"></code>
-                                <button onclick="copyText(document.getElementById('created-invite-code').textContent,this)" class="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-colors border border-blue-200 shrink-0">Copy</button>
+                    <div id="create-success" class="hidden dash-feedback dash-feedback--info">
+                        <p>Group created. Share this with your friends:</p>
+                        <div class="dash-share-stack">
+                            <div class="dash-share-row">
+                                <span class="dash-share-label">Code</span>
+                                <code id="created-invite-code" class="mono-code dash-code-output"></code>
+                                <button type="button" onclick="copyText(document.getElementById('created-invite-code').textContent,this)" class="dash-copy-btn">Copy</button>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400 w-10 shrink-0">Link</span>
-                                <input id="created-invite-link" readonly class="flex-1 text-xs text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-blue-200 truncate">
-                                <button onclick="copyText(document.getElementById('created-invite-link').value,this)" class="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2.5 py-1.5 rounded-lg hover:bg-blue-100 transition-colors border border-blue-200 shrink-0">Copy</button>
+                            <div class="dash-share-row">
+                                <span class="dash-share-label">Link</span>
+                                <input id="created-invite-link" readonly class="dash-link-output">
+                                <button type="button" onclick="copyText(document.getElementById('created-invite-link').value,this)" class="dash-copy-btn">Copy</button>
                             </div>
                         </div>
                     </div>
-                    <div id="create-error" class="hidden mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3"></div>
+                    <div id="create-error" class="hidden dash-feedback dash-feedback--error"></div>
                 </div>
-                <!-- Join -->
+
                 <div id="pp-join" class="hidden">
-                    <p class="text-sm text-slate-500 mb-3">Ask your study partner for their 16-character invite code, then paste it here.</p>
-                    <form id="join-form" onsubmit="joinChavruta(event)" class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="join-code" required placeholder="Paste 16-character invite code here" maxlength="16"
-                            class="flex-1 px-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm mono-code uppercase tracking-widest focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:outline-none transition-all text-slate-800"
-                            oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
-                        <button type="submit" id="join-btn" class="px-6 py-2.5 text-sm font-bold text-white rounded-xl shadow hover:shadow-lg transition-all whitespace-nowrap" style="background:linear-gradient(135deg,#b7871e,#c89a35)">
-                            Join Group
-                        </button>
+                    <p class="dash-panel-note">Ask your study partner for their 16-character invite code, then paste it here.</p>
+                    <form id="join-form" onsubmit="joinChavruta(event)" class="dash-form-row">
+                        <input type="text" id="join-code" required placeholder="Paste 16-character invite code" maxlength="16" class="dash-input mono-code" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                        <button type="submit" id="join-btn" class="dash-submit-btn dash-submit-btn-join">Join Group</button>
                     </form>
-                    <div id="join-success" class="hidden mt-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3"></div>
-                    <div id="join-error"   class="hidden mt-3 text-sm text-red-600   bg-red-50   border border-red-200   rounded-xl p-3"></div>
+                    <div id="join-success" class="hidden dash-feedback dash-feedback--success"></div>
+                    <div id="join-error" class="hidden dash-feedback dash-feedback--error"></div>
                 </div>
             </div>
 
-            <!-- Empty state -->
-            <div id="empty-state" class="hidden section-card py-16 text-center">
-                <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#eff4ff">
-                    <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <div id="empty-state" class="hidden section-card dash-empty-state">
+                <div class="dash-empty-icon">
+                    <svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                 </div>
-                <p class="font-heading text-xl font-semibold text-slate-700 mb-2" style="font-family:'Cormorant Garamond',serif">No study groups yet</p>
-                <p class="text-slate-400 text-sm max-w-xs mx-auto">Click <strong>+ New Group</strong> above to create one, or switch to <strong>Join with Code</strong> if a friend invited you.</p>
+                <p class="dash-empty-title font-heading">No study groups yet</p>
+                <p class="dash-empty-copy">Click <strong>+ New Group</strong> above to create one, or switch to <strong>Join with Code</strong> if a friend invited you.</p>
             </div>
 
-            <!-- Chavrutas grid -->
-            <div id="chavrutas-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+            <div id="chavrutas-grid"></div>
         </section>
 
-        <!-- ── EXPLORE ── -->
-        <section class="fade-up fd3">
-            <div class="flex items-center gap-3 mb-5">
-                <div class="w-1 h-7 rounded-full" style="background:#c89a35"></div>
-                <h2 class="text-xl font-bold text-slate-800">Explore the Website</h2>
+        <section class="section-card dash-section-shell fade-up fd4">
+            <div class="dash-section-header">
+                <div class="dash-section-title-row">
+                    <div class="dash-section-bar"></div>
+                    <h2 class="dash-section-title">Explore</h2>
+                </div>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <a href="study.html" class="explore-card">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#eff4ff">
-                        <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
+            <div class="dash-explore-grid">
+                <a href="study.html" id="explore-study-link" class="dash-explore-card tone-study">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
-                    <span class="font-semibold text-slate-800 text-sm">Weekly Parsha</span>
-                    <span class="text-slate-400 text-xs mt-1 leading-snug">Torah study room</span>
+                    <span class="dash-explore-label">Weekly Parsha</span>
+                    <span class="dash-explore-sub">Torah study room</span>
                 </a>
-                <a href="holidays/index.html" class="explore-card">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#fdf8ef">
-                        <svg class="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <rect x="3" y="5" width="18" height="16" rx="2" ry="2" stroke-width="2"></rect>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3v4M8 3v4M3 11h18"></path>
-                        </svg>
+                <a href="holidays/index.html" class="dash-explore-card tone-holiday">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" ry="2" stroke-width="2"></rect><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3v4M8 3v4M3 11h18"></path></svg>
                     </div>
-                    <span class="font-semibold text-slate-800 text-sm">Holidays</span>
-                    <span class="text-slate-400 text-xs mt-1 leading-snug">Yom Tov guides</span>
+                    <span class="dash-explore-label">Holidays</span>
+                    <span class="dash-explore-sub">Yom Tov guides</span>
                 </a>
-                <a href="prayers.html" class="explore-card">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#f0fff4">
-                        <svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l2.4 4.9L20 9l-4 3.9.9 5.6L12 16l-4.9 2.5.9-5.6L4 9l5.6-1.1L12 3z"></path>
-                        </svg>
+                <a href="prayers.html" class="dash-explore-card tone-prayer">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l2.4 4.9L20 9l-4 3.9.9 5.6L12 16l-4.9 2.5.9-5.6L4 9l5.6-1.1L12 3z"></path></svg>
                     </div>
-                    <span class="font-semibold text-slate-800 text-sm">Prayers</span>
-                    <span class="text-slate-400 text-xs mt-1 leading-snug">Daily tefillot</span>
+                    <span class="dash-explore-label">Prayers</span>
+                    <span class="dash-explore-sub">Daily tefillot</span>
                 </a>
-                <a href="songs.html" class="explore-card">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#fef3ff">
-                        <svg class="w-6 h-6 text-fuchsia-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-2v13"></path>
-                            <circle cx="6" cy="18" r="3" stroke-width="2"></circle>
-                            <circle cx="18" cy="16" r="3" stroke-width="2"></circle>
-                        </svg>
+                <a href="songs.html" class="dash-explore-card tone-songs">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-2v13"></path><circle cx="6" cy="18" r="3" stroke-width="2"></circle><circle cx="18" cy="16" r="3" stroke-width="2"></circle></svg>
                     </div>
-                    <span class="font-semibold text-slate-800 text-sm">Songs</span>
-                    <span class="text-slate-400 text-xs mt-1 leading-snug">Shabbat and zmirot</span>
+                    <span class="dash-explore-label">Songs</span>
+                    <span class="dash-explore-sub">Shabbat and zmirot</span>
                 </a>
-                <a href="about.html" class="explore-card">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3" style="background:#f0f9ff">
-                        <svg class="w-6 h-6 text-cyan-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                <a href="bookmarks.html" class="dash-explore-card tone-bookmarks">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                     </div>
-                    <span class="font-semibold text-slate-800 text-sm">About</span>
-                    <span class="text-slate-400 text-xs mt-1 leading-snug">Our mission</span>
+                    <span class="dash-explore-label">Bookmarks</span>
+                    <span class="dash-explore-sub">Your saved items</span>
+                </a>
+                <a href="about.html" class="dash-explore-card tone-about">
+                    <div class="dash-explore-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <span class="dash-explore-label">About</span>
+                    <span class="dash-explore-sub">Our mission</span>
                 </a>
             </div>
         </section>
 
-        <!-- Footer quote -->
-        <p class="text-center text-slate-400 italic text-sm pb-4 fade-up fd4" style="font-family:'Cormorant Garamond',serif">
-            "When two sit together and words of Torah pass between them, the Divine Presence rests between them." — Pirkei Avot 3:2
-        </p>
+        <p class="dash-footer-quote fade-up fd5">"When two sit together and words of Torah pass between them, the Divine Presence rests between them." — Pirkei Avot 3:2</p>
     </div>
 </main>
 
-
 <!-- ═══ CONFIRM MODAL ═══ -->
-<div id="confirm-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-7 text-center">
-        <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+<div id="confirm-modal" class="dash-modal hidden">
+    <div class="dash-modal-card" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center w-11 h-11 rounded-2xl bg-red-50 text-red-500 mb-4 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         </div>
-        <h3 id="confirm-title"   class="font-bold text-slate-800 text-lg mb-1"></h3>
-        <p  id="confirm-message" class="text-slate-500 text-sm mb-6"></p>
-        <div class="flex gap-3">
-            <button onclick="closeConfirmModal(false)" class="flex-1 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all">Cancel</button>
-            <button onclick="closeConfirmModal(true)"  class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition-all shadow-md">Confirm</button>
+        <h3 id="confirm-title" class="dash-modal-title text-center"></h3>
+        <p id="confirm-message" class="dash-modal-sub text-center"></p>
+        <div class="dash-modal-actions">
+            <button onclick="closeConfirmModal(false)" class="dash-modal-btn">Cancel</button>
+            <button onclick="closeConfirmModal(true)" class="dash-modal-btn dash-modal-btn-danger">Confirm</button>
         </div>
     </div>
 </div>
 
-<div id="study-room-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7">
+<div id="study-room-modal" class="dash-modal hidden">
+    <div class="dash-modal-card" role="dialog" aria-modal="true">
         <div class="flex items-start justify-between gap-3">
             <div>
-                <h3 class="font-bold text-slate-900 text-lg">Choose a Study Room</h3>
-                <p class="text-sm text-slate-500 mt-1">You are in multiple chavrutot. Select the one you want to enter.</p>
+                <h3 class="dash-modal-title">Choose a Study Room</h3>
+                <p class="dash-modal-sub">You are in multiple chavrutot. Select the one you want to enter.</p>
             </div>
             <button type="button" onclick="closeStudyRoomModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
         </div>
-        <div id="study-room-options" class="mt-5 space-y-2.5"></div>
-        <button type="button" onclick="closeStudyRoomModal()" class="mt-5 w-full py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-            Cancel
-        </button>
+        <div id="study-room-options" class="dash-modal-list"></div>
+        <button type="button" onclick="closeStudyRoomModal()" class="dash-modal-btn mt-4">Cancel</button>
     </div>
 </div>
-
-
 <!-- ═══ SCRIPTS ═══ -->
 <script src="js/daily-inspiration.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
+    const loadingStateEl = document.getElementById('loading-state');
+    const mainContentEl = document.getElementById('main-content');
+
+    function showStartupFailure(message) {
+        const textEl = loadingStateEl?.querySelector('.dash-loading-text');
+        if (textEl) {
+            textEl.textContent = message;
+            textEl.style.color = '#b93e45';
+        }
+        loadingStateEl?.classList.remove('hidden');
+        mainContentEl?.classList.add('hidden');
+    }
+
+    if (!window.firebase || typeof window.firebase.initializeApp !== 'function') {
+        showStartupFailure('Unable to connect to app services. Please refresh this page.');
+        throw new Error('Firebase SDK failed to load.');
+    }
+
     /* ── Firebase ── */
-    firebase.initializeApp({
-        apiKey:"AIzaSyCpDtcBpKvjLwihnL2bizxBFxXD6Qn8Lb4",
-        authDomain:"letterinthescroll.firebaseapp.com",
-        projectId:"letterinthescroll",
-        storageBucket:"letterinthescroll.firebasestorage.app",
-        messagingSenderId:"625129870318",
-        appId:"1:625129870318:web:a654e97b734faa3b4df4ff",
-        measurementId:"G-LYSXTDEPVG"
-    });
+    try {
+        firebase.initializeApp({
+            apiKey:"AIzaSyCpDtcBpKvjLwihnL2bizxBFxXD6Qn8Lb4",
+            authDomain:"letterinthescroll.firebaseapp.com",
+            projectId:"letterinthescroll",
+            storageBucket:"letterinthescroll.firebasestorage.app",
+            messagingSenderId:"625129870318",
+            appId:"1:625129870318:web:a654e97b734faa3b4df4ff",
+            measurementId:"G-LYSXTDEPVG"
+        });
+    } catch (error) {
+        if (!String(error).includes('already exists')) {
+            showStartupFailure('Could not initialize app services. Please refresh and try again.');
+            throw error;
+        }
+    }
     const auth = firebase.auth();
     const db   = firebase.firestore();
 
@@ -433,11 +1517,152 @@
     let userChavrutas = [];
     let latestDailyQuote = null;
     let dailyQuoteToggleInFlight = false;
+    let dashboardShellRevealed = false;
+
+    function revealDashboardShell() {
+        if (dashboardShellRevealed) {
+            return;
+        }
+        dashboardShellRevealed = true;
+        loadingStateEl?.classList.add('hidden');
+        mainContentEl?.classList.remove('hidden');
+    }
+
+    // Safety net: never leave users on an infinite loading spinner.
+    setTimeout(() => {
+        if (!dashboardShellRevealed) {
+            revealDashboardShell();
+        }
+    }, 7000);
+
+    /* ════ HEADER DROPDOWN (matches page-auth.js) ════ */
+    function buildDashboardHeaderDropdown(firstName, email) {
+        const headerActions = document.getElementById('header-actions');
+        if (!headerActions) return;
+
+        // Remove any existing dropdown elements
+        ['header-user-dropdown-container', 'header-dropdown-backdrop', 'header-user-dropdown'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        });
+
+        const initial = firstName.charAt(0).toUpperCase();
+
+        // Pill button inside header
+        const container = document.createElement('div');
+        container.id = 'header-user-dropdown-container';
+        container.style.cssText = 'position:relative;display:flex;align-items:center;';
+        container.innerHTML = `
+            <button id="header-user-menu-btn"
+                    class="header-user-pill"
+                    title="Account Menu"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                <div class="header-user-avatar" aria-hidden="true">${initial}</div>
+                <span class="header-btn-text">${firstName}</span>
+                <svg class="header-user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        `;
+        headerActions.appendChild(container);
+
+        // Dropdown panel + backdrop on document.body (nothing can clip them)
+        const backdrop = document.createElement('div');
+        backdrop.id = 'header-dropdown-backdrop';
+        backdrop.className = 'header-dropdown-backdrop';
+        document.body.appendChild(backdrop);
+
+        const dropdown = document.createElement('div');
+        dropdown.id = 'header-user-dropdown';
+        dropdown.className = 'header-dropdown';
+        dropdown.setAttribute('role', 'menu');
+        dropdown.setAttribute('aria-hidden', 'true');
+        dropdown.innerHTML = `
+            <div class="header-dropdown-header">
+                <div class="header-dropdown-avatar-lg" aria-hidden="true">${initial}</div>
+                <div class="header-dropdown-user-info">
+                    <p class="header-dropdown-display-name">${firstName}</p>
+                    <p class="header-dropdown-email" title="${email}">${email}</p>
+                </div>
+            </div>
+            <div class="header-dropdown-section">
+                <a href="about.html" class="header-dropdown-item" role="menuitem">
+                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    About
+                </a>
+                <a href="bookmarks.html" class="header-dropdown-item" role="menuitem">
+                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    Bookmarks
+                </a>
+                <a href="settings.html" class="header-dropdown-item" role="menuitem">
+                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Account Settings
+                </a>
+            </div>
+            <div class="header-dropdown-section">
+                <button id="dash-logout-btn" class="header-dropdown-item header-dropdown-item--danger" role="menuitem">
+                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        `;
+        document.body.appendChild(dropdown);
+
+        const menuBtn = container.querySelector('#header-user-menu-btn');
+        const logoutBtn = dropdown.querySelector('#dash-logout-btn');
+
+        function positionDropdown() {
+            const rect = menuBtn.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + 8) + 'px';
+            dropdown.style.right = Math.max(8, window.innerWidth - rect.right) + 'px';
+        }
+
+        function openDropdown() {
+            positionDropdown();
+            dropdown.classList.add('open');
+            backdrop.classList.add('open');
+            menuBtn.setAttribute('aria-expanded', 'true');
+            dropdown.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeDropdown() {
+            dropdown.classList.remove('open');
+            backdrop.classList.remove('open');
+            menuBtn.setAttribute('aria-expanded', 'false');
+            dropdown.setAttribute('aria-hidden', 'true');
+        }
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.contains('open') ? closeDropdown() : openDropdown();
+        });
+
+        backdrop.addEventListener('click', closeDropdown);
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target) && !dropdown.contains(e.target)) closeDropdown();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDropdown();
+        });
+
+        logoutBtn.addEventListener('click', () => signOutUser());
+    }
 
     /* ════ AUTH ════ */
     auth.onAuthStateChanged(async user => {
         if (!user) { window.location.href = 'index.html'; return; }
         currentUser = user;
+        revealDashboardShell();
 
         // Display name — prefer Firestore firstName for accuracy
         let firstName = '';
@@ -455,10 +1680,14 @@
             firstName = raw.split(' ')[0].split('@')[0];
         }
         document.getElementById('welcome-heading').textContent = 'Shalom, ' + firstName + '!';
-        document.getElementById('user-greeting').textContent   = firstName;
+        const greetEl = document.getElementById('user-greeting');
+        if (greetEl) greetEl.textContent = firstName;
         
         const avatarEl = document.getElementById('user-avatar-initial');
         if (avatarEl) avatarEl.textContent = firstName.charAt(0).toUpperCase();
+
+        // Build header user dropdown (same as page-auth.js)
+        buildDashboardHeaderDropdown(firstName, user.email || '');
 
         // URL params
         const p    = new URLSearchParams(window.location.search);
@@ -508,12 +1737,10 @@
             .where('members','array-contains',currentUser.uid)
             .onSnapshot(async snap => {
                 const list = snap.docs.map(d=>({id:d.id,...d.data()}));
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
+                revealDashboardShell();
                 await renderChavrutas(list);
             }, err => {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
+                revealDashboardShell();
                 renderChavrutas([]);
             });
         chavUnsubs.push(unsub);
@@ -547,24 +1774,22 @@
 
     function configureHeroStudyButton() {
         const heroBtn = document.getElementById('hero-study-btn');
-        if (!heroBtn) {
-            return;
-        }
+        const exploreLink = document.getElementById('explore-study-link');
+        const headerLink = document.getElementById('go-to-weekly');
+        const allLinks = [heroBtn, exploreLink, headerLink].filter(Boolean);
 
         if (userChavrutas.length === 1) {
-            heroBtn.href = 'study.html?chavruta=' + userChavrutas[0].id;
-            heroBtn.setAttribute('title', 'Enter your study room');
+            const url = 'study.html?chavruta=' + userChavrutas[0].id;
+            allLinks.forEach(el => { el.href = url; el.setAttribute('title', 'Enter your study room'); });
             return;
         }
 
         if (userChavrutas.length > 1) {
-            heroBtn.href = '#';
-            heroBtn.setAttribute('title', 'Choose a study room');
+            allLinks.forEach(el => { el.href = '#'; el.setAttribute('title', 'Choose a study room'); });
             return;
         }
 
-        heroBtn.href = 'study.html';
-        heroBtn.setAttribute('title', 'Open study room');
+        allLinks.forEach(el => { el.href = 'study.html'; el.setAttribute('title', 'Open study room'); });
     }
 
     function openStudyRoomModal() {
@@ -777,7 +2002,7 @@
         }
         line = document.createElement('p');
         line.id = 'daily-quote-community-line';
-        line.className = 'text-xs text-slate-500 mt-3';
+        line.className = 'dash-community-line';
         content.appendChild(line);
         return line;
     }
@@ -795,10 +2020,11 @@
             return;
         }
 
-        const tintOpacity = (0.08 + (0.22 * intensity)).toFixed(3);
-        content.style.background = `linear-gradient(135deg, rgba(219,234,254,${tintOpacity}) 0%, rgba(239,246,255,${tintOpacity}) 100%)`;
-        content.style.borderColor = `rgba(59,130,246,${Math.min(0.55, 0.25 + intensity * 0.35).toFixed(3)})`;
-        content.style.boxShadow = `0 8px 22px rgba(30,64,175,${Math.min(0.18, 0.08 + intensity * 0.12).toFixed(3)})`;
+        const depth = (0.58 + (0.22 * intensity)).toFixed(3);
+        const glow = (0.20 + (0.24 * intensity)).toFixed(3);
+        content.style.background = `linear-gradient(145deg, rgba(14,33,60,${depth}) 0%, rgba(19,88,108,${depth}) 100%)`;
+        content.style.borderColor = `rgba(143,208,244,${Math.min(0.72, 0.28 + intensity * 0.45).toFixed(3)})`;
+        content.style.boxShadow = `0 12px 24px rgba(6,24,45,${Math.min(0.45, 0.22 + intensity * 0.24).toFixed(3)}), 0 0 0 1px rgba(143,208,244,${glow})`;
     }
 
     function getCurrentDailyQuotePayload() {
@@ -834,23 +2060,35 @@
     }
 
     async function getDailyQuoteBookmarkSummary(quoteId) {
-        const snapshot = await db.collectionGroup('dailyQuoteBookmarks')
-            .where('quoteId', '==', String(quoteId))
-            .get();
-
+        // Query each chavruta the user belongs to individually
+        // (collectionGroup queries fail because rules deny reading other chavrutas)
         const userLatestTime = new Map();
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data() || {};
-            if (!data.userId) {
-                return;
-            }
-            const stamp = data.timestamp && typeof data.timestamp.toMillis === 'function'
-                ? data.timestamp.toMillis()
-                : 0;
-            if (!userLatestTime.has(data.userId) || stamp > userLatestTime.get(data.userId)) {
-                userLatestTime.set(data.userId, stamp);
-            }
-        });
+
+        if (userChavrutas.length > 0) {
+            const snapshots = await Promise.all(
+                userChavrutas.map(room =>
+                    db.collection('chavrutas').doc(room.id)
+                        .collection('dailyQuoteBookmarks')
+                        .where('quoteId', '==', String(quoteId))
+                        .get()
+                        .catch(() => null)
+                )
+            );
+
+            snapshots.forEach(snapshot => {
+                if (!snapshot) return;
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data() || {};
+                    if (!data.userId) return;
+                    const stamp = data.timestamp && typeof data.timestamp.toMillis === 'function'
+                        ? data.timestamp.toMillis()
+                        : 0;
+                    if (!userLatestTime.has(data.userId) || stamp > userLatestTime.get(data.userId)) {
+                        userLatestTime.set(data.userId, stamp);
+                    }
+                });
+            });
+        }
 
         const userIds = Array.from(userLatestTime.keys()).sort((a, b) => (userLatestTime.get(b) || 0) - (userLatestTime.get(a) || 0));
         await fetchNames(userIds);
@@ -1136,6 +2374,11 @@
     const headerStudyBtn = document.getElementById('go-to-weekly');
     if (headerStudyBtn) {
         headerStudyBtn.addEventListener('click', handleStudyEntryClick);
+    }
+
+    const exploreStudyLink = document.getElementById('explore-study-link');
+    if (exploreStudyLink) {
+        exploreStudyLink.addEventListener('click', handleStudyEntryClick);
     }
 
     const studyRoomModal = document.getElementById('study-room-modal');

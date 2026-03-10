@@ -18,10 +18,9 @@
     <link rel="stylesheet" href="css/songs-style.css">
     <link rel="stylesheet" href="css/tailwind-utilities.css">
 </head>
-<body class="bg-gray-50 min-h-screen" data-enable-text-size="true" data-header-fallback="true">
+<body class="bg-gray-50 min-h-screen" data-header-fallback="true">
 
-
-    <!-- Professional Responsive Header -->
+    <!-- Header -->
     <header class="header-main relative z-30">
         <div class="header-container">
             <div class="header-branding-section">
@@ -68,57 +67,12 @@
                         </svg>
                         <span class="header-btn-text">Songs</span>
                     </a>
-                    <a href="about.html" class="header-btn header-btn-secondary" title="About this project">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="header-btn-text">About</span>
-                    </a>
-                    <button id="my-bookmarks-btn" class="header-btn header-btn-secondary" title="View your saved verses">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                        </svg>
-                        <span class="header-btn-text">Bookmarks</span>
-                    </button>
-                    <button id="logout-btn" class="header-btn header-btn-secondary" title="Sign out">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        <span class="header-btn-text">Sign Out</span>
-                    </button>
+                    <!-- User dropdown injected by page-auth.js -->
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Community Status Bar (Subtle Header Bar) -->
-    <div id="community-status-bar" class="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200" data-always-visible="true">
-        <div class="container mx-auto">
-            <div id="community-status-content" class="flex flex-wrap items-center gap-4 text-sm text-gray-700">
-                <!-- Online Users Section -->
-                <div id="header-online-section" class="status-section hidden flex items-center gap-1.5">
-                    <div class="flex items-center gap-1">
-                        <div class="status-leading-dot bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-xs font-medium text-gray-700">Online:</span>
-                    </div>
-                    <span id="header-online-concurrency" class="status-concurrency hidden"></span>
-                    <div id="header-online-users-list" class="status-scroll flex flex-nowrap items-center gap-1.5 overflow-x-auto">
-                        <!-- Online users will be listed here -->
-                    </div>
-                </div>
-                <!-- Your Status Section -->
-                <div id="header-your-status" class="status-section hidden flex items-center gap-1 ml-auto">
-                    <span id="header-your-username" class="text-xs font-medium text-gray-800"></span>
-                    <span class="text-xs text-gray-400">•</span>
-                    <span id="header-your-login-time" class="text-xs text-gray-600">just now</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Instant presence restore — runs before any module loads -->
-    <script>
-    (function(){try{var c=JSON.parse(sessionStorage.getItem('presenceCache'));if(!c||!c.html||Date.now()-c.ts>1800000)return;var l=document.getElementById('header-online-users-list');var s=document.getElementById('header-online-section');var b=document.getElementById('community-status-bar');if(l&&s&&b){l.innerHTML=c.html;s.classList.remove('hidden');b.classList.remove('hidden')}}catch(e){}})();
-    </script>
 
 
     <!-- Page Title Bar -->
@@ -132,7 +86,7 @@
         <section class="songs-hero">
             <div>
                 <p class="songs-eyebrow">Songs and Poems</p>
-                <h2 class="songs-title">Listen, reflect, read, and sing</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-4" style="line-height:1.2;">Listen, reflect, read, and sing</h2>
                 <p class="songs-subtitle">
                     Explore songs and poems that celebrate faith, hope, and the journey of the soul. Songs include
                     YouTube players with full lyrics, and poems are presented in a crafted reading experience.
@@ -213,8 +167,6 @@
     <script src="js/shabbat.js"></script>
     <script src="js/songs.js"></script>
     <script src="js/header-fallback.js"></script>
-    <script src="js/text-size-control.js"></script>
-    <!-- Shared presence tracking for online status across all pages -->
-    <script type="module" src="js/presence.js"></script>
+    <script type="module" src="js/page-auth.js"></script>
 </body>
 </html>

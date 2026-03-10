@@ -28,9 +28,9 @@
         if (chavrutaParam) {
             sessionStorage.setItem('activeChavrutaId', chavrutaParam);
         }
-        // If no chavruta context, redirect to dashboard
+        // If no chavruta context, allow read-only mode (verses still display)
         if (!sessionStorage.getItem('activeChavrutaId')) {
-            window.location.href = 'dashboard.html';
+            document.documentElement.setAttribute('data-readonly', 'true');
         }
     })();
     </script>
@@ -87,24 +87,7 @@
                         </svg>
                         <span class="header-btn-text">Songs</span>
                     </a>
-                    <a href="about.html" class="header-btn header-btn-secondary" title="About this project">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="header-btn-text">About</span>
-                    </a>
-                    <a id="my-bookmarks-btn" href="bookmarks.html" class="header-btn header-btn-secondary" title="View your saved verses">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                        </svg>
-                        <span class="header-btn-text">Bookmarks</span>
-                    </a>
-                    <button id="logout-btn" class="header-btn header-btn-secondary" title="Sign out">
-                        <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        <span class="header-btn-text">Sign Out</span>
-                    </button>
+                    <!-- User dropdown injected by main.js -->
                 </div>
             </div>
         </div>
@@ -141,12 +124,7 @@
     </script>
 
 
-    <div class="bg-blue-50 border-b border-blue-100">
-        <div class="container mx-auto px-4 py-2.5 text-xs sm:text-sm text-blue-900 flex flex-wrap items-center justify-between gap-2">
-            <p>Need holidays, prayers, songs, or room management? Use your dashboard home.</p>
-            <a href="dashboard.html" class="font-semibold underline hover:text-blue-700">Go to Dashboard</a>
-        </div>
-    </div>
+
 
     <!-- Improved Navigation Bar -->
     <nav class="bg-white shadow-md z-10 border-b-2 border-gray-200">
@@ -338,6 +316,7 @@
                 </div>
             </div>
 
+            <div id="text-size-anchor" class="mb-2"></div>
             <div id="parsha-text" class="space-y-4"></div>
         </div>
     </main>
