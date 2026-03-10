@@ -431,6 +431,7 @@
 
     <script>
         const INVITE_CODE_LENGTH = 16;
+        const PENDING_INVITE_STORAGE_KEY = 'pendingInviteCode';
 
         const firebaseConfig = {
             apiKey: "AIzaSyCpDtcBpKvjLwihnL2bizxBFxXD6Qn8Lb4",
@@ -454,6 +455,41 @@
                 return '';
             }
             return rawValue.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, INVITE_CODE_LENGTH);
+        }
+
+        function savePendingInviteCode(code) {
+            const normalized = sanitizeInviteCode(code);
+            if (normalized.length === INVITE_CODE_LENGTH) {
+                sessionStorage.setItem(PENDING_INVITE_STORAGE_KEY, normalized);
+            }
+        }
+
+        function readPendingInviteCode() {
+            return sanitizeInviteCode(sessionStorage.getItem(PENDING_INVITE_STORAGE_KEY) || '');
+        }
+
+        function clearPendingInviteCode() {
+            sessionStorage.removeItem(PENDING_INVITE_STORAGE_KEY);
+        }
+
+        function resolveInviteCode() {
+            const input = document.getElementById('invite-code-input');
+            const fromInput = sanitizeInviteCode((input && input.value) || '');
+
+            if (fromInput.length === INVITE_CODE_LENGTH) {
+                savePendingInviteCode(fromInput);
+                return fromInput;
+            }
+
+            if (fromInput.length > 0) {
+                return fromInput;
+            }
+
+            const pending = readPendingInviteCode();
+            if (pending.length === INVITE_CODE_LENGTH && input) {
+                input.value = pending;
+            }
+            return pending;
         }
 
         function toTitleWord(word) {
@@ -558,19 +594,28 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const inviteCodeFromUrl = sanitizeInviteCode(urlParams.get('invite') || '');
+        const hasInviteParam = urlParams.has('invite');
+        const inviteInput = document.getElementById('invite-code-input');
 
-        if (urlParams.get('invite')) {
+        if (hasInviteParam) {
             const banner = document.getElementById('invite-banner');
             const bannerText = banner.querySelector('p');
             banner.classList.remove('hidden');
 
             if (inviteCodeFromUrl.length === INVITE_CODE_LENGTH) {
-                document.getElementById('invite-code-input').value = inviteCodeFromUrl;
+                inviteInput.value = inviteCodeFromUrl;
+                savePendingInviteCode(inviteCodeFromUrl);
             } else {
+                clearPendingInviteCode();
                 bannerText.textContent = 'This invite link looks invalid. Ask your chavruta leader for a new 16-character code.';
                 banner.classList.remove('from-amber-50', 'to-yellow-50', 'border-amber-200');
                 banner.classList.add('from-red-50', 'to-rose-50', 'border-red-200');
                 bannerText.className = 'text-sm font-medium text-red-900';
+            }
+        } else {
+            const pendingCode = readPendingInviteCode();
+            if (pendingCode.length === INVITE_CODE_LENGTH && inviteInput) {
+                inviteInput.value = pendingCode;
             }
         }
 
@@ -580,8 +625,9 @@
             }
 
             syncUserProfile(user).finally(function() {
-                if (inviteCodeFromUrl.length === INVITE_CODE_LENGTH) {
-                    processInviteCode(inviteCodeFromUrl, user)
+                const inviteCode = resolveInviteCode();
+                if (inviteCode.length === INVITE_CODE_LENGTH) {
+                    processInviteCode(inviteCode, user)
                         .then(function(found) {
                             if (!found) {
                                 window.location.href = 'dashboard.html';
@@ -609,7 +655,7 @@
                 await syncUserProfile(user, user.displayName, false);
                 showSuccess('Signed in with Google. Redirecting...');
 
-                const code = sanitizeInviteCode(document.getElementById('invite-code-input').value);
+                const code = resolveInviteCode();
                 if (code.length === INVITE_CODE_LENGTH) {
                     const found = await processInviteCode(code, user);
                     if (!found) {
@@ -719,7 +765,7 @@
             clearMessages();
             const email = document.getElementById('signin-email').value.trim();
             const password = document.getElementById('signin-password').value;
-            const inviteCode = sanitizeInviteCode(document.getElementById('invite-code-input').value);
+            const inviteCode = resolveInviteCode();
 
             if (!email) {
                 showError('Please enter your email address.');
@@ -767,7 +813,7 @@
             const email = document.getElementById('create-email').value.trim();
             const password = document.getElementById('create-password').value;
             const confirm = document.getElementById('create-confirm').value;
-            const inviteCode = sanitizeInviteCode(document.getElementById('invite-code-input').value);
+            const inviteCode = resolveInviteCode();
             const displayName = normalizeDisplayName(rawName);
 
             if (!displayName) {
@@ -892,6 +938,7 @@
                 joinError.classList.remove('hidden');
                 return;
             }
+            savePendingInviteCode(code);
 
             const user = auth.currentUser;
             if (!user) {
@@ -933,12 +980,26 @@
                     if (!snapshot.empty) {
                         const chavrutaId = snapshot.docs[0].id;
                         sessionStorage.setItem('activeChavrutaId', chavrutaId);
+                        clearPendingInviteCode();
                         window.location.href = 'dashboard.html?join=' + encodeURIComponent(chavrutaId);
                         return true;
                     }
+                    clearPendingInviteCode();
                     return false;
                 });
         }
+
+        document.getElementById('invite-code-input').addEventListener('input', function(e) {
+            const cleaned = sanitizeInviteCode(e.target.value);
+            if (e.target.value !== cleaned) {
+                e.target.value = cleaned;
+            }
+            if (!cleaned) {
+                clearPendingInviteCode();
+            } else if (cleaned.length === INVITE_CODE_LENGTH) {
+                savePendingInviteCode(cleaned);
+            }
+        });
 
         document.getElementById('signin-email').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') document.getElementById('signin-password').focus();

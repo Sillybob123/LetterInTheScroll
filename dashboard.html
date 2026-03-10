@@ -1518,6 +1518,7 @@
     let latestDailyQuote = null;
     let dailyQuoteToggleInFlight = false;
     let dashboardShellRevealed = false;
+    const INVITE_CODE_LENGTH = 16;
 
     function revealDashboardShell() {
         if (dashboardShellRevealed) {
@@ -1658,19 +1659,35 @@
         logoutBtn.addEventListener('click', () => signOutUser());
     }
 
+    function sanitizeInviteCode(rawValue) {
+        if (typeof rawValue !== 'string') {
+            return '';
+        }
+        return rawValue.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, INVITE_CODE_LENGTH);
+    }
+
     /* ════ AUTH ════ */
     auth.onAuthStateChanged(async user => {
-        if (!user) { window.location.href = 'index.html'; return; }
+        if (!user) {
+            const params = new URLSearchParams(window.location.search);
+            const inviteCode = sanitizeInviteCode(params.get('invite') || '');
+            if (inviteCode.length === INVITE_CODE_LENGTH) {
+                window.location.href = 'index.html?invite=' + encodeURIComponent(inviteCode);
+            } else {
+                window.location.href = 'index.html';
+            }
+            return;
+        }
         currentUser = user;
         revealDashboardShell();
 
-        // Display name — prefer Firestore firstName for accuracy
+        // Display name — prefer Firestore displayName (set in Settings)
         let firstName = '';
         try {
             const userSnap = await db.collection('users').doc(user.uid).get();
             if (userSnap.exists) {
                 const data = userSnap.data();
-                firstName = data.firstName || data.displayName || '';
+                firstName = data.displayName || data.firstName || data.username || '';
                 if (firstName && firstName.includes(' ')) firstName = firstName.split(' ')[0];
             }
         } catch (e) { /* ignore */ }
@@ -1690,11 +1707,24 @@
         buildDashboardHeaderDropdown(firstName, user.email || '');
 
         // URL params
-        const p    = new URLSearchParams(window.location.search);
-        const jId  = p.get('join');
-        const iCode = p.get('invite');
+        const p = new URLSearchParams(window.location.search);
+        const jId = p.get('join');
+        const rawInviteParam = p.get('invite');
+        const iCode = sanitizeInviteCode(rawInviteParam || '');
         if (jId)    { await autoJoin(jId);                 window.history.replaceState({}, '', 'dashboard.html'); }
-        if (iCode)  { try { await joinByCode(iCode.toUpperCase()); showBanner('Joined via invite link!', 'success'); } catch(e){ showBanner(e.message||'Could not join.','error'); } window.history.replaceState({}, '', 'dashboard.html'); }
+        if (rawInviteParam) {
+            if (iCode.length !== INVITE_CODE_LENGTH) {
+                showBanner('Invite link is invalid. Ask for a new 16-character code.', 'error');
+            } else {
+                try {
+                    await joinByCode(iCode);
+                    showBanner('Joined via invite link!', 'success');
+                } catch (e) {
+                    showBanner(e.message || 'Could not join.', 'error');
+                }
+            }
+            window.history.replaceState({}, '', 'dashboard.html');
+        }
 
         loadChavrutas();
         refreshDailyQuoteBookmarkState();
@@ -1728,7 +1758,14 @@
         const v = new Uint8Array(16); crypto.getRandomValues(v);
         return Array.from(v, x => c[x%c.length]).join('');
     }
-    function inviteLink(code) { return window.location.origin + '/index.html?invite=' + code; }
+    function inviteLink(code) {
+        const normalizedCode = sanitizeInviteCode(String(code || ''));
+        const url = new URL('index.html', window.location.href);
+        if (normalizedCode.length === INVITE_CODE_LENGTH) {
+            url.searchParams.set('invite', normalizedCode);
+        }
+        return url.toString();
+    }
 
     /* ════ LOAD CHAVRUTAS ════ */
     function loadChavrutas() {
@@ -2251,9 +2288,13 @@
     /* ════ JOIN ════ */
     async function joinChavruta(e) {
         e.preventDefault();
-        const code=document.getElementById('join-code').value.trim().toUpperCase();
+        const code = sanitizeInviteCode(document.getElementById('join-code').value);
         const btn=document.getElementById('join-btn'), sEl=document.getElementById('join-success'), eEl=document.getElementById('join-error');
         sEl.classList.add('hidden'); eEl.classList.add('hidden');
+        if (code.length !== INVITE_CODE_LENGTH) {
+            showEl(eEl, 'Invite codes must be exactly 16 letters/numbers.');
+            return;
+        }
         btn.disabled=true; btn.textContent='Joining…';
         try { await joinByCode(code); sEl.textContent='Joined! Your group is now showing below.'; sEl.classList.remove('hidden'); document.getElementById('join-code').value=''; }
         catch(err){ showEl(eEl, err.message||'Failed to join.'); }
@@ -2261,7 +2302,11 @@
     }
 
     async function joinByCode(code) {
-        const snap=await db.collection('chavrutas').where('inviteCode','==',code).get();
+        const normalizedCode = sanitizeInviteCode(code);
+        if (normalizedCode.length !== INVITE_CODE_LENGTH) {
+            throw new Error('Invite codes must be exactly 16 letters/numbers.');
+        }
+        const snap=await db.collection('chavrutas').where('inviteCode','==',normalizedCode).limit(1).get();
         if(snap.empty) throw new Error('Code not found. Double-check and try again.');
         const doc=snap.docs[0], data=doc.data();
         if((data.members||[]).includes(currentUser.uid)) throw new Error('You are already in this group.');
