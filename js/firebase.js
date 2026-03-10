@@ -1196,8 +1196,8 @@ async function getUserInfo(userId) {
         docId: docSnap.id,
         userId: data.userId || docSnap.id,
         email: data.email || null,
-        username: data.username || 'Friend',
-        displayName: data.username || data.displayName || 'Friend',
+        username: data.displayName || data.username || 'Friend',
+        displayName: data.displayName || data.username || 'Friend',
         lastLogin: data.lastLogin || null,
         isOnline: !!data.isOnline,
         lastSeen: data.lastSeen || null

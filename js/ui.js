@@ -741,6 +741,11 @@ export function resolveDisplayName(user) {
         return 'Friend';
     }
 
+    // Prefer displayName (set by user in Settings) over username (email-derived)
+    if (user.displayName && typeof user.displayName === 'string' && user.displayName !== 'Friend' && !user.displayName.includes('@')) {
+        return user.displayName;
+    }
+
     const candidate = user.username;
     if (candidate && typeof candidate === 'string' && !candidate.includes('@')) {
         return candidate;

@@ -2826,12 +2826,12 @@ function updateHeaderUserDropdown(user, userProfile) {
             dropdownContainer.id = 'header-user-dropdown-container';
             dropdownContainer.className = 'relative flex items-center ml-2';
             
-            // Get user's first name
+            // Get user's first name — prefer displayName (set in Settings)
             let firstName = 'Account';
-            if (userProfile && userProfile.firstName) {
+            if (userProfile && userProfile.displayName && userProfile.displayName !== 'Friend') {
+                firstName = userProfile.displayName.split(' ')[0];
+            } else if (userProfile && userProfile.firstName) {
                 firstName = userProfile.firstName;
-            } else if (userProfile && userProfile.username) {
-                firstName = userProfile.username.split(' ')[0];
             } else if (user.displayName) {
                 firstName = user.displayName.split(' ')[0];
             }

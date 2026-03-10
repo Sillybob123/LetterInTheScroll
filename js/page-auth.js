@@ -4,7 +4,7 @@
  * WITHOUT community presence tracking.
  */
 
-import { initAuth } from './firebase.js';
+import { initAuth, getUserInfo } from './firebase.js';
 import { getDisplayNameFromEmail } from './name-utils.js';
 
 // Resolve a base path prefix for links (handles /holidays/ subdirectory)
@@ -163,10 +163,23 @@ function buildHeaderDropdown(firstName, email) {
 }
 
 // Initialize - initAuth will redirect to index.html if not signed in
-initAuth((user) => {
+initAuth(async (user) => {
     if (!user) return;
-    const email    = user.email || '';
-    const fullName = getDisplayNameFromEmail(email);
-    const firstName = fullName.split(' ')[0];
+    const email = user.email || '';
+
+    // Try Firestore displayName first, fall back to email-derived name
+    let firstName = '';
+    try {
+        const profile = await getUserInfo(user.uid);
+        if (profile && profile.displayName && profile.displayName !== 'Friend') {
+            firstName = profile.displayName.split(' ')[0];
+        }
+    } catch (e) { /* ignore */ }
+
+    if (!firstName) {
+        const fullName = getDisplayNameFromEmail(email);
+        firstName = fullName.split(' ')[0];
+    }
+
     buildHeaderDropdown(firstName, email);
 });
