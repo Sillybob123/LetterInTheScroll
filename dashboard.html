@@ -185,36 +185,58 @@
             </div>
         </div>
 
-        <!-- ── WELCOME HERO ── -->
-        <section class="section-card p-7 sm:p-8 fade-up fd1 relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-amber-100/40 blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-blue-100/40 blur-3xl pointer-events-none"></div>
-            <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-blue-600/60 mb-1">Welcome back</p>
-                    <h1 id="welcome-heading" class="font-heading text-4xl sm:text-5xl text-slate-900 font-semibold leading-tight" style="font-family:'Cormorant Garamond',serif">Shalom!</h1>
-                    <p class="text-slate-500 text-sm mt-2 max-w-sm">Choose a study group below to enter your room, or explore any section using the navigation above.</p>
-                </div>
-                <div class="flex flex-col sm:items-end gap-2 shrink-0">
-                    <a id="hero-study-btn" href="study.html"
-                       class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-white shadow-lg hover:shadow-xl transition-all text-sm hover:-translate-y-0.5 transform"
-                       style="background:linear-gradient(135deg,#16285e,#2f56ab)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                        Enter Study Room
-                    </a>
-                    <a href="settings.html" class="text-xs text-slate-400 hover:text-blue-600 transition-colors">Account Settings</a>
+        <!-- ── DAILY INSPIRATION (PREMIUM) ── -->
+        <section id="daily-inspiration" class="fade-up fd1 relative">
+            <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#16285e] via-[#1e347b] to-[#2f56ab] p-1 shadow-2xl">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtbjAwbS0xMCAxMHYtMTBtMTAgMTB2LTEwbS0xMCAxMHYtMTBtMTAgMTB2LTEwbS0xMCAxMHYtMTBoiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvZz48L3N2Zz4=')] opacity-20 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-[#16285e] to-transparent pointer-events-none"></div>
+                <div class="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-blue-400/20 blur-3xl pointer-events-none"></div>
+                <div class="absolute -top-16 right-10 w-40 h-40 rounded-full bg-amber-400/20 blur-3xl pointer-events-none"></div>
+
+                <div class="relative bg-[#16285e]/40 backdrop-blur-md rounded-[1.8rem] p-6 sm:p-10 border border-white/10 flex flex-col items-center text-center">
+                    <div class="w-12 h-12 bg-amber-400/20 rounded-full flex items-center justify-center mb-5 border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                        <svg class="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    
+                    <p data-quote-hebrew class="text-2xl sm:text-3xl font-serif text-amber-50 mb-4 drop-shadow-md tracking-wider leading-relaxed" style="direction:rtl; font-family: 'David', 'Times New Roman', serif;">Loading today's teaching...</p>
+                    <p data-quote-translation class="text-base sm:text-lg text-blue-50/90 font-medium max-w-3xl leading-relaxed mb-6">...</p>
+                    
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="h-px w-8 bg-blue-300/30"></div>
+                        <span data-quote-source class="text-xs font-bold uppercase tracking-[0.2em] text-amber-300"></span>
+                        <div class="h-px w-8 bg-blue-300/30"></div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 sm:p-5 bg-white/5 border border-white/10 rounded-2xl max-w-2xl w-full text-left">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1 flex-shrink-0">
+                                <svg class="w-4 h-4 text-amber-400/70" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                            </div>
+                            <p data-quote-reflection class="text-sm text-blue-100/80 leading-relaxed italic">An inspiring reflection will appear here each day.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="daily-inspiration" class="daily-inspiration-section fade-up fd2">
-            <div class="daily-inspiration-card">
-                <div class="daily-inspiration-content">
-                    <p data-quote-hebrew class="daily-inspiration-hebrew">Loading today's teaching...</p>
-                    <p data-quote-translation class="daily-inspiration-translation"></p>
-                    <span data-quote-source class="daily-inspiration-source"></span>
-                    <p data-quote-reflection class="daily-inspiration-reflection">An inspiring reflection will appear here each day.</p>
+        <!-- ── WELCOME HEADER (COMPACT) ── -->
+        <section class="fade-up fd2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/60 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-4 sm:px-6 sm:py-4 shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold border border-blue-200 shadow-sm shrink-0" id="user-avatar-initial"></div>
+                <div>
+                    <h1 id="welcome-heading" class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Shalom!</h1>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Choose a study group below, or explore the navigation above.</p>
                 </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <a id="hero-study-btn" href="study.html" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-white shadow hover:shadow-md transition-all text-xs hover:-translate-y-0.5" style="background:linear-gradient(135deg,#16285e,#2f56ab)">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Enter Room
+                </a>
+                <a href="settings.html" class="p-2.5 text-slate-400 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 rounded-xl transition-colors border border-slate-100" title="Account Settings">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </a>
             </div>
         </section>
 
@@ -445,6 +467,9 @@
         }
         document.getElementById('welcome-heading').textContent = 'Shalom, ' + firstName + '!';
         document.getElementById('user-greeting').textContent   = firstName;
+        
+        const avatarEl = document.getElementById('user-avatar-initial');
+        if (avatarEl) avatarEl.textContent = firstName.charAt(0).toUpperCase();
 
         // URL params
         const p    = new URLSearchParams(window.location.search);
