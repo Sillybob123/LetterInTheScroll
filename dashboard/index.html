@@ -2483,6 +2483,8 @@
         if (normalizedCode.length === INVITE_CODE_LENGTH) {
             url.searchParams.set('invite', normalizedCode);
         }
+        // Keep a stable, explicit card version marker for social preview fetchers.
+        url.searchParams.set('card', 'v5');
         return url.toString();
     }
 
