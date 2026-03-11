@@ -26,9 +26,7 @@
             --panel-shadow: 0 22px 44px rgba(8, 24, 59, 0.16);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -40,50 +38,13 @@
             min-height: 100vh;
         }
 
-        .about-stage {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .about-stage::before,
-        .about-stage::after {
-            content: '';
-            position: absolute;
-            pointer-events: none;
-            border-radius: 50%;
-            filter: blur(0.5px);
-            animation: floatHalo 14s ease-in-out infinite alternate;
-        }
-
-        .about-stage::before {
-            width: 420px;
-            height: 420px;
-            top: 390px;
-            left: -170px;
-            background: radial-gradient(circle, rgba(56, 96, 178, 0.17) 0%, transparent 70%);
-        }
-
-        .about-stage::after {
-            width: 360px;
-            height: 360px;
-            top: 980px;
-            right: -120px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.18) 0%, transparent 68%);
-            animation-delay: 2.3s;
-        }
-
-        @keyframes floatHalo {
-            0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.8; }
-            100% { transform: translate3d(0, -20px, 0) scale(1.05); opacity: 1; }
-        }
-
+        /* ── Hero ── */
         .about-hero {
             position: relative;
             overflow: hidden;
-            padding: clamp(4rem, 8vw, 6.25rem) 1.25rem clamp(3.5rem, 7vw, 5.2rem);
+            padding: clamp(5rem, 10vw, 8rem) 1.25rem clamp(4rem, 8vw, 6rem);
             text-align: center;
-            background:
-                linear-gradient(145deg, var(--bg-ink) 0%, var(--bg-deep) 48%, var(--bg-mid) 100%);
+            background: linear-gradient(145deg, var(--bg-ink) 0%, var(--bg-deep) 48%, var(--bg-mid) 100%);
             isolation: isolate;
         }
 
@@ -93,28 +54,20 @@
             inset: 0;
             background:
                 linear-gradient(130deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 42%),
-                repeating-linear-gradient(
-                    125deg,
-                    rgba(255,255,255,0.04) 0,
-                    rgba(255,255,255,0.04) 1px,
-                    transparent 1px,
-                    transparent 12px
-                );
+                repeating-linear-gradient(125deg, rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px);
             z-index: -2;
         }
 
         .about-hero::after {
             content: '';
             position: absolute;
-            width: 530px;
-            height: 530px;
-            top: -250px;
-            right: -150px;
+            width: 530px; height: 530px;
+            top: -250px; right: -150px;
             border: 1px solid rgba(255, 224, 133, 0.26);
             border-radius: 50%;
             box-shadow: 0 0 0 70px rgba(255, 224, 133, 0.05);
             z-index: -1;
-            animation: heroOrbit 20s linear infinite;
+            animation: heroOrbit 40s linear infinite;
         }
 
         @keyframes heroOrbit {
@@ -143,6 +96,9 @@
             font-weight: 700;
             background: rgba(212, 175, 55, 0.08);
             margin-bottom: 1.35rem;
+            opacity: 0;
+            animation: heroFadeUp 800ms ease forwards;
+            animation-delay: 200ms;
         }
 
         .hero-hebrew {
@@ -155,6 +111,9 @@
             margin-bottom: 0.35rem;
             letter-spacing: 0.06em;
             direction: rtl;
+            opacity: 0;
+            animation: heroFadeUp 800ms ease forwards;
+            animation-delay: 400ms;
         }
 
         .hero-title {
@@ -167,6 +126,9 @@
             letter-spacing: -0.01em;
             font-weight: 700;
             text-wrap: balance;
+            opacity: 0;
+            animation: heroFadeUp 800ms ease forwards;
+            animation-delay: 600ms;
         }
 
         .hero-title .gold {
@@ -180,6 +142,9 @@
             color: rgba(230, 238, 255, 0.9);
             font-size: clamp(1rem, 2.4vw, 1.16rem);
             line-height: 1.8;
+            opacity: 0;
+            animation: heroFadeUp 800ms ease forwards;
+            animation-delay: 800ms;
         }
 
         .hero-scroll {
@@ -191,12 +156,18 @@
             text-transform: uppercase;
             font-size: 0.68rem;
             letter-spacing: 0.16em;
-            animation: pulseLift 2.4s ease-in-out infinite;
+            opacity: 0;
+            animation: heroFadeUp 800ms ease forwards, gentleBounce 3s ease-in-out 1.6s infinite;
         }
 
-        @keyframes pulseLift {
-            0%, 100% { transform: translateY(0); opacity: 0.8; }
-            50% { transform: translateY(5px); opacity: 1; }
+        @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
         }
 
         .hero-divider {
@@ -206,6 +177,37 @@
             background: linear-gradient(90deg, transparent 8%, var(--gold) 50%, transparent 92%);
         }
 
+        /* ── Floating background accents ── */
+        .about-stage { position: relative; overflow: hidden; }
+
+        .about-stage::before,
+        .about-stage::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: floatHalo 18s ease-in-out infinite alternate;
+        }
+
+        .about-stage::before {
+            width: 420px; height: 420px;
+            top: 390px; left: -170px;
+            background: radial-gradient(circle, rgba(56, 96, 178, 0.14) 0%, transparent 70%);
+        }
+
+        .about-stage::after {
+            width: 360px; height: 360px;
+            top: 980px; right: -120px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.14) 0%, transparent 68%);
+            animation-delay: 4s;
+        }
+
+        @keyframes floatHalo {
+            0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.7; }
+            100% { transform: translate3d(0, -16px, 0) scale(1.03); opacity: 1; }
+        }
+
+        /* ── Content ── */
         .about-content-wrap {
             position: relative;
             z-index: 2;
@@ -214,6 +216,7 @@
             padding: clamp(2.3rem, 4vw, 3.2rem) 1.2rem 4.5rem;
         }
 
+        /* ── Panels ── */
         .about-panel {
             position: relative;
             max-width: 960px;
@@ -230,10 +233,8 @@
         .about-panel::before {
             content: '';
             position: absolute;
-            top: -30%;
-            right: -22%;
-            width: 300px;
-            height: 300px;
+            top: -30%; right: -22%;
+            width: 300px; height: 300px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(212, 175, 55, 0.13) 0%, transparent 70%);
             pointer-events: none;
@@ -272,10 +273,9 @@
             margin: 0 0 1rem;
         }
 
-        .about-panel p:last-child {
-            margin-bottom: 0;
-        }
+        .about-panel p:last-child { margin-bottom: 0; }
 
+        /* ── Theology card ── */
         .theology-card {
             margin: 1.3rem 0;
             background: linear-gradient(125deg, rgba(15, 42, 97, 0.96) 0%, rgba(36, 70, 146, 0.97) 100%);
@@ -302,6 +302,7 @@
             line-height: 1.8;
         }
 
+        /* ── Quote block ── */
         .quote-block {
             margin: 1.3rem 0;
             border-left: 3px solid var(--gold);
@@ -328,6 +329,7 @@
             font-weight: 600;
         }
 
+        /* ── Signal grid ── */
         .grid-signal {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -337,7 +339,7 @@
 
         .signal-card {
             border-radius: 14px;
-            padding: 0.95rem 0.95rem;
+            padding: 0.95rem;
             background: #ffffff;
             border: 1px solid rgba(15, 42, 97, 0.1);
             box-shadow: 0 10px 22px rgba(15, 42, 97, 0.08);
@@ -358,6 +360,7 @@
             color: #49566f;
         }
 
+        /* ── Closing panel ── */
         .closing-panel {
             text-align: center;
             background: linear-gradient(145deg, #0d2450 0%, #19387b 55%, #1f438f 100%);
@@ -366,21 +369,15 @@
         }
 
         .closing-panel::before {
-            right: auto;
-            left: -10%;
-            top: -36%;
+            right: auto; left: -10%; top: -36%;
             background: radial-gradient(circle, rgba(255, 216, 107, 0.2) 0%, transparent 74%);
         }
 
         .closing-panel h2,
         .closing-panel p,
-        .closing-panel .panel-kicker {
-            color: #e8efff;
-        }
+        .closing-panel .panel-kicker { color: #e8efff; }
 
-        .closing-panel h2 {
-            color: #ffe4a3;
-        }
+        .closing-panel h2 { color: #ffe4a3; }
 
         .closing-panel .panel-kicker {
             border-color: rgba(255, 224, 133, 0.36);
@@ -421,58 +418,62 @@
             box-shadow: 0 18px 30px rgba(8, 20, 46, 0.34);
         }
 
+        /* ── Reveal animations — fade in ONCE, never fade out ── */
         .reveal {
             opacity: 0;
-            transform: translateY(28px) scale(0.985);
-            filter: blur(10px);
+            transform: translateY(24px);
             transition:
-                opacity 620ms ease,
-                transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1),
-                filter 620ms ease;
-            will-change: opacity, transform, filter;
+                opacity 700ms cubic-bezier(0.2, 0.6, 0.3, 1),
+                transform 700ms cubic-bezier(0.2, 0.6, 0.3, 1);
+            will-change: opacity, transform;
         }
 
         .reveal.is-visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
+            transform: translateY(0);
         }
 
-        .reveal.hero-loaded {
-            opacity: 1;
-            transform: none;
-            filter: none;
+        /* Staggered children inside panels */
+        .reveal.is-visible .panel-kicker  { animation: childFade 500ms ease forwards; animation-delay: 80ms; }
+        .reveal.is-visible h2             { animation: childFade 500ms ease forwards; animation-delay: 160ms; }
+        .reveal.is-visible p              { animation: childFade 500ms ease forwards; animation-delay: 240ms; }
+        .reveal.is-visible .theology-card { animation: childFade 500ms ease forwards; animation-delay: 320ms; }
+        .reveal.is-visible .quote-block   { animation: childFade 500ms ease forwards; animation-delay: 320ms; }
+        .reveal.is-visible .grid-signal   { animation: childFade 500ms ease forwards; animation-delay: 360ms; }
+
+        .reveal .panel-kicker,
+        .reveal h2,
+        .reveal p,
+        .reveal .theology-card,
+        .reveal .quote-block,
+        .reveal .grid-signal { opacity: 0; }
+
+        .reveal.is-visible .panel-kicker,
+        .reveal.is-visible h2,
+        .reveal.is-visible p,
+        .reveal.is-visible .theology-card,
+        .reveal.is-visible .quote-block,
+        .reveal.is-visible .grid-signal { opacity: 1; }
+
+        @keyframes childFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
+        /* ── Responsive ── */
         @media (max-width: 900px) {
-            .grid-signal {
-                grid-template-columns: 1fr;
-            }
-
-            .about-panel {
-                border-radius: 20px;
-            }
+            .grid-signal { grid-template-columns: 1fr; }
+            .about-panel { border-radius: 20px; }
         }
 
         @media (max-width: 640px) {
-            .hero-subtitle br {
-                display: none;
-            }
-
-            .about-panel {
-                padding: 1.35rem 1.05rem;
-            }
-
-            .about-panel p {
-                font-size: 0.96rem;
-                line-height: 1.8;
-            }
-
-            .study-cta {
-                width: 100%;
-            }
+            .hero-subtitle br { display: none; }
+            .about-panel { padding: 1.35rem 1.05rem; }
+            .about-panel p { font-size: 0.96rem; line-height: 1.8; }
+            .study-cta { width: 100%; }
         }
 
+        /* ── Reduced motion ── */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -480,13 +481,16 @@
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
             }
-
-            .reveal,
-            .reveal.is-visible {
+            .reveal, .reveal.is-visible {
                 opacity: 1;
                 transform: none;
-                filter: none;
             }
+            .reveal .panel-kicker,
+            .reveal h2,
+            .reveal p,
+            .reveal .theology-card,
+            .reveal .quote-block,
+            .reveal .grid-signal { opacity: 1; }
         }
     </style>
 </head>
@@ -545,7 +549,7 @@
 
     <section class="about-stage">
         <section class="about-hero">
-            <div class="hero-inner reveal hero-loaded" data-reveal>
+            <div class="hero-inner">
                 <div class="hero-badge">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
                     Our Foundation
@@ -579,58 +583,57 @@
             <article class="about-panel reveal" data-reveal>
                 <p class="panel-kicker">Chapter Two</p>
                 <h2>The Sovereignty of the Single Stroke</h2>
-                <p>In the laws of the Sofer (the scribe), a Torah scroll is a miracle of precision. It contains 304,805 letters. If a single one of those letters is missing, or even if a small crack divides one letter into two, the entire scroll is considered <em>pasul</em>: invalid for use.</p>
-                <p>This is the ultimate rejection of the idea that any individual is ordinary. In the eyes of the Divine, there is no such thing as a redundant person. You are not a face in the crowd or a statistic in a database. You are a specific, essential character in a cosmic narrative.</p>
+                <p>In the laws of the Sofer (the scribe), a Torah scroll is a miracle of precision. It contains 304,805 letters. If a single one of those letters is missing, or even if a small crack divides one letter into two, the entire scroll is considered <em>pasul</em>: invalid for use. It cannot be read in the synagogue; it cannot fulfill its holy purpose.</p>
+                <p>This is the ultimate rejection of the idea that any individual is "ordinary." In the eyes of the Divine, there is no such thing as a redundant person. You are not a face in the crowd or a statistic in a database. You are a specific, essential character in a cosmic narrative.</p>
                 <div class="quote-block">
                     <blockquote>"I am a Jew because, being a child of my people, I have heard the call to add my chapter to its unfinished story. I am a stage on its journey, a connecting link between the generations."</blockquote>
                     <cite>Rabbi Jonathan Sacks</cite>
                 </div>
-                <p>This unfinished story depends on your integrity. If you do not show up to your life, if you do not ink your values onto the world, there is a hole in the scroll that no one else can fill. Your existence is a moral claim upon the universe.</p>
+                <p>This "unfinished story" depends on your integrity. If you do not show up to your life — if you do not "ink" your values onto the world — there is a hole in the scroll that no one else can fill. Your existence is a moral claim upon the universe.</p>
             </article>
 
             <article class="about-panel reveal" data-reveal>
                 <p class="panel-kicker">Chapter Three</p>
                 <h2>The Architecture of Connection</h2>
-                <p>A letter standing alone is a beautiful thing, but it is silent. It only gains the power of speech when it is joined to others. This project, A Letter in the Scroll, was born from the realization that modern life has left many of us as lonely letters.</p>
-                <p>We have individual identity, but we often lose the words and sentences of community. We believe that Torah is not meant to be studied in isolation. It is meant to be a conversation: a Chavruta, where two souls wrestle with the text until the sparks fly.</p>
+                <p>A letter standing alone is a beautiful thing, but it is silent. It only gains the power of speech when it is joined to others. When a Bet joins an Aleph, it becomes <em>Abba</em> (Father). When a Lamed joins an Aleph, it becomes <em>El</em> (God).</p>
+                <p>This project, A Letter in the Scroll, was born from the realization that modern life has left many of us as "lonely letters." We have our individual identities, but we have lost the "words" and "sentences" of community. We believe that Torah is not meant to be studied in isolation. It is meant to be a conversation — a Chavruta — where two souls wrestle with the text until the sparks fly.</p>
                 <div class="grid-signal">
                     <div class="signal-card">
                         <h4>Shared Rhythm</h4>
-                        <p>By anchoring study in the weekly portion, we join one global word across time.</p>
+                        <p>By anchoring our learning in the weekly rhythm of the portion, we join a global "Word." We realize that we are part of a people who, though scattered across space, are united in time by the same verses and the same moral questions.</p>
                     </div>
                     <div class="signal-card">
                         <h4>Living Community</h4>
-                        <p>Through Chavruta, learning becomes relational, accountable, and spiritually alive.</p>
+                        <p>Through Chavruta, learning becomes relational, accountable, and spiritually alive. We recreate the ancient study hall in a digital age.</p>
                     </div>
                 </div>
-                <p>Through this platform, we seek to recreate the ancient study hall in a digital age. Though scattered across geography, we become united by sacred text and moral purpose.</p>
             </article>
 
             <article class="about-panel reveal" data-reveal>
                 <p class="panel-kicker">Chapter Four</p>
                 <h2>Translating Heaven to Earth</h2>
-                <p>The beauty of the scroll is that it is physical. It is made of skin, wood, and ink. It reminds us that Judaism is not a religion of lofty aspiration alone. It is a religion of deeds.</p>
-                <p>We call these deeds Mitzvot. A Mitzvah is the point where the infinite light of the Creator meets the finite reality of a human hand. When you study Torah to become more just, more compassionate, and more disciplined in speech, you are repairing the scroll.</p>
+                <p>The beauty of the scroll is that it is physical. It is made of skin, wood, and ink. It reminds us that Judaism is not a religion of "lofty aspirations" or "inner feelings" alone. It is a religion of deeds.</p>
+                <p>We call these deeds Mitzvot. A Mitzvah is the point where the infinite light of the Creator meets the finite reality of a human hand. When you study Torah to learn how to be more just, how to be more compassionate, or how to guard your tongue from gossip, you are "repairing the scroll."</p>
                 <div class="quote-block">
                     <blockquote>"The world is a darkened room. The Torah is the light. When you study, you are not just gaining knowledge; you are lighting a candle."</blockquote>
                     <cite>The Baal Shem Tov</cite>
                 </div>
-                <p>Our mission is to help you light that candle. We believe serious study leads to serious living. We are building this company to shape a generation transformed by Torah: people who carry their learning into their businesses, homes, and public lives.</p>
+                <p>Our mission is to help you light that candle. We believe that serious study leads to serious living. We want to shape a generation of people who are not just "literate" in their heritage, but who are transformed by it — people who carry their learning into their businesses, their homes, and their public lives.</p>
             </article>
 
             <article class="about-panel reveal" data-reveal>
                 <p class="panel-kicker">Chapter Five</p>
                 <h2>The Eternal Echo</h2>
-                <p>We are the heirs of those who stood at the foot of Mount Sinai and pledged themselves to a covenant of love and law. We are the descendants of those who, even in history's darkest nights, never surrendered their faith, their humor, or their devotion to learning.</p>
-                <p>They stayed faithful to the scroll when walking away would have been easier. They knew that as long as the scroll existed, they were never truly lost. They were home.</p>
-                <p>By joining this project, you step into that lineage. You choose to be more than a consumer of content. You choose to become a guardian of the trust, learning the language of your ancestors so you can speak it to your children.</p>
+                <p>We are the heirs of those who stood at the foot of Mount Sinai and pledged themselves to a covenant of love and law. We are the descendants of those who, even in the darkest nights of history, never lost their humor, their faith, or their commitment to education.</p>
+                <p>They stayed faithful to the scroll when it would have been easier to walk away. They knew that as long as the scroll existed, they were never truly lost. They were home.</p>
+                <p>By joining this project, you are stepping into that lineage. You are choosing to be more than a consumer of content; you are choosing to be a guardian of the trust. You are learning the language of your ancestors so that you can speak it to your children.</p>
             </article>
 
             <article class="about-panel closing-panel reveal" data-reveal>
                 <p class="panel-kicker">Final Invitation</p>
                 <h2>A Call to the Scribe Within</h2>
                 <p>The scroll is open. The parchment is waiting. The ink of our generation is currently being prepared.</p>
-                <p>We invite you to find your place, not as a spectator, but as a participant. Use this space to connect with ancient wisdom, build bonds of brotherhood and sisterhood, and refine the stroke of your own soul.</p>
+                <p>We invite you to find your place. Not just as a spectator, but as a participant. Use this space to connect with ancient wisdom, to build bonds of brotherhood and sisterhood, and to refine the "stroke" of your own soul.</p>
                 <p>Let the eternity of our people live on in you. Carry the scroll, and it will carry you.</p>
                 <p class="closing-tagline">Chazak, chazak, v'nitchazek. Be strong, be strong, and let us strengthen one another.</p>
                 <a class="study-cta" href="/study">
@@ -655,30 +658,26 @@
             if (!items.length) return;
 
             if (!('IntersectionObserver' in window)) {
-                items.forEach(function(item) {
-                    item.classList.add('is-visible');
-                });
+                items.forEach(function(item) { item.classList.add('is-visible'); });
                 return;
             }
 
             var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
+                    // Only add — NEVER remove. No fade-out on scroll.
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                    } else {
-                        entry.target.classList.remove('is-visible');
+                        observer.unobserve(entry.target); // Stop watching once revealed
                     }
                 });
             }, {
                 root: null,
-                rootMargin: '0px 0px -10% 0px',
-                threshold: 0.18
+                rootMargin: '0px 0px -60px 0px',
+                threshold: 0.1
             });
 
             items.forEach(function(item, index) {
-                if (!item.classList.contains('hero-loaded')) {
-                    item.style.transitionDelay = Math.min(index * 65, 250) + 'ms';
-                }
+                item.style.transitionDelay = (index * 80) + 'ms';
                 observer.observe(item);
             });
         })();

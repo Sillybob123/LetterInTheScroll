@@ -1049,8 +1049,13 @@
 
             const user = auth.currentUser;
             if (!user) {
-                joinError.textContent = 'Please sign in first before joining a study group.';
-                joinError.classList.remove('hidden');
+                // Save the code so it's picked up after sign-in or account creation
+                savePendingInviteCode(code);
+                // Switch to the Create Account tab and prompt the user
+                switchTab('create');
+                showSuccess('Great! Create an account (or sign in) to join this study group. Your invite code has been saved.');
+                // Pre-fill the invite input so the code is visible
+                document.getElementById('invite-code-input').value = code;
                 return;
             }
 
@@ -1097,7 +1102,17 @@
         }
 
         document.getElementById('invite-code-input').addEventListener('input', function(e) {
-            const cleaned = sanitizeInviteCode(e.target.value);
+            var raw = e.target.value;
+            // If user pasted a link, extract the code from it
+            if (raw.includes('//') || raw.includes('invite')) {
+                var extracted = extractInviteCode(raw);
+                if (extracted.length === INVITE_CODE_LENGTH) {
+                    e.target.value = extracted;
+                    savePendingInviteCode(extracted);
+                    return;
+                }
+            }
+            var cleaned = sanitizeInviteCode(raw);
             if (e.target.value !== cleaned) {
                 e.target.value = cleaned;
             }
