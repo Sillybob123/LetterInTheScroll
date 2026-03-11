@@ -95,6 +95,9 @@ export function showInfoPanel() {
     panel.classList.remove('hidden');
     requestAnimationFrame(() => panel.classList.add('is-visible'));
     document.body.style.overflow = 'hidden';
+    // Hide text size control while definition/info popup is open
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) textSizeCtrl.style.visibility = 'hidden';
 }
 
 /**
@@ -109,6 +112,9 @@ export function hideInfoPanel() {
         infoContent.classList.remove('info-content-bookmarks');
     }
     document.body.style.overflow = 'auto';
+    // Restore text size control
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) textSizeCtrl.style.visibility = '';
 }
 
 /**
