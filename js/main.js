@@ -580,7 +580,15 @@ async function enforceStudyRoomSelection(user) {
             return false;
         }
 
-        // Multiple rooms and no explicit selection: require user choice.
+        // Multiple rooms — check if user already picked one this session
+        const storedChavrutaId = sessionStorage.getItem('activeChavrutaId');
+        if (storedChavrutaId && chavrutaIds.has(storedChavrutaId)) {
+            document.documentElement.removeAttribute('data-readonly');
+            closeStudyRoomPickerModal();
+            return false;
+        }
+
+        // No valid stored selection: require user choice.
         sessionStorage.removeItem('activeChavrutaId');
         document.documentElement.setAttribute('data-readonly', 'true');
         openStudyRoomPickerModal(chavrutas);
