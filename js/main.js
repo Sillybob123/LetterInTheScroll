@@ -468,6 +468,12 @@ function isStudyPagePath() {
     return normalizedPath === '/study' || normalizedPath === '/study/index.html';
 }
 
+// Guard: prevent enforceStudyRoomSelection from running concurrently
+// (onAuthStateChanged can fire multiple times)
+let _studyRoomSelectionInFlight = false;
+let _studyRoomResolved = false; // stays true once a valid room is confirmed
+let _userChavrutas = []; // cached for switch-group button
+
 function closeStudyRoomPickerModal() {
     const modal = document.getElementById('study-room-picker-modal');
     if (!modal || modal.classList.contains('hidden')) {
@@ -512,6 +518,9 @@ function openStudyRoomPickerModal(chavrutas = []) {
         }
         sessionStorage.setItem('activeChavrutaId', selectedId);
         document.documentElement.removeAttribute('data-readonly');
+        _studyRoomResolved = true;
+        closeStudyRoomPickerModal();
+        // Reload with chavruta param so it's picked up on next load
         const targetUrl = new URL('/study', window.location.origin);
         targetUrl.searchParams.set('chavruta', selectedId);
         window.location.assign(targetUrl.toString());
@@ -535,6 +544,14 @@ async function enforceStudyRoomSelection(user) {
     if (!user || !isStudyPagePath()) {
         return false;
     }
+    // Already resolved a valid room — don't re-run (prevents modal spam)
+    if (_studyRoomResolved) {
+        return false;
+    }
+    if (_studyRoomSelectionInFlight) {
+        return false;
+    }
+    _studyRoomSelectionInFlight = true;
 
     try {
         const membershipsQuery = query(
@@ -546,6 +563,8 @@ async function enforceStudyRoomSelection(user) {
             id: docSnapshot.id,
             ...docSnapshot.data()
         }));
+
+        _userChavrutas = chavrutas;
 
         if (!chavrutas.length) {
             sessionStorage.removeItem('activeChavrutaId');
@@ -562,6 +581,7 @@ async function enforceStudyRoomSelection(user) {
             sessionStorage.setItem('activeChavrutaId', requestedChavrutaId);
             document.documentElement.removeAttribute('data-readonly');
             closeStudyRoomPickerModal();
+            _studyRoomResolved = true;
             return false;
         }
 
@@ -570,17 +590,21 @@ async function enforceStudyRoomSelection(user) {
             sessionStorage.setItem('activeChavrutaId', onlyRoomId);
             document.documentElement.removeAttribute('data-readonly');
             closeStudyRoomPickerModal();
-
-            if (requestedChavrutaId !== onlyRoomId) {
-                const targetUrl = new URL('/study', window.location.origin);
-                targetUrl.searchParams.set('chavruta', onlyRoomId);
-                window.location.replace(targetUrl.toString());
-                return true;
-            }
+            _studyRoomResolved = true;
+            // Single chavruta — just use it, no redirect needed
             return false;
         }
 
-        // Multiple rooms and no explicit selection: require user choice.
+        // Multiple rooms — check if user already picked one this session
+        const storedChavrutaId = sessionStorage.getItem('activeChavrutaId');
+        if (storedChavrutaId && chavrutaIds.has(storedChavrutaId)) {
+            document.documentElement.removeAttribute('data-readonly');
+            closeStudyRoomPickerModal();
+            _studyRoomResolved = true;
+            return false;
+        }
+
+        // No valid stored selection: require user choice.
         sessionStorage.removeItem('activeChavrutaId');
         document.documentElement.setAttribute('data-readonly', 'true');
         openStudyRoomPickerModal(chavrutas);
@@ -593,6 +617,27 @@ async function enforceStudyRoomSelection(user) {
 
 async function init() {
     try {
+        // ── Phase 0: Render from cache or inject skeleton pill ──
+        (function injectFromCacheOrSkeleton() {
+            const ha = document.getElementById('header-actions');
+            if (!ha || document.getElementById('header-user-dropdown-container')) return;
+            let cached = null;
+            try { cached = JSON.parse(sessionStorage.getItem('headerUserCache')); } catch (_) {}
+            if (cached && cached.firstName && cached.email) {
+                // Render real dropdown instantly from cache
+                updateHeaderUserDropdown({ email: cached.email, displayName: cached.firstName }, { displayName: cached.firstName });
+                return;
+            }
+            const sk = document.createElement('div');
+            sk.id = 'header-user-dropdown-container';
+            sk.innerHTML = `
+                <div class="header-user-pill" style="opacity:0;pointer-events:none;min-width:88px;" aria-hidden="true">
+                    <div class="header-user-avatar"></div>
+                    <span class="header-btn-text" style="min-width:42px;">&nbsp;</span>
+                </div>`;
+            ha.appendChild(sk);
+        })();
+
         // ── Phase 1: Instant UI — render cached parsha text before auth ──
         setState({ allParshas: TORAH_PARSHAS });
 
@@ -2943,9 +2988,15 @@ function updateHeaderUserDropdown(user, userProfile) {
     let dropdownContainer = document.getElementById('header-user-dropdown-container');
     const oldLogoutBtn = document.getElementById('logout-btn');
 
+    // Detect skeleton placeholder (has no real menu button)
+    const isSkeleton = dropdownContainer && !dropdownContainer.querySelector('#header-user-menu-btn');
+
     if (user) {
-        if (!dropdownContainer) {
-            // Remove the old logout button if it exists and hasn't been replaced
+        if (!dropdownContainer || isSkeleton) {
+            // Remove skeleton or old logout button
+            if (isSkeleton && dropdownContainer) {
+                dropdownContainer.remove();
+            }
             if (oldLogoutBtn && oldLogoutBtn.parentElement === headerActions) {
                 oldLogoutBtn.remove();
             }
@@ -3003,12 +3054,6 @@ function updateHeaderUserDropdown(user, userProfile) {
                         </div>
                     </div>
                     <div class="header-dropdown-section">
-                        <a href="/about" class="header-dropdown-item" role="menuitem">
-                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            About
-                        </a>
                         <a href="/bookmarks" id="my-bookmarks-btn" class="header-dropdown-item" role="menuitem">
                             <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
@@ -3080,6 +3125,7 @@ function updateHeaderUserDropdown(user, userProfile) {
                         closeCommentsPanel(stopListeningForComments);
                         hideInfoPanel();
                         sessionStorage.removeItem('activeChavrutaId');
+                        sessionStorage.removeItem('headerUserCache');
                         window.location.href = '/';
                     }
                 } catch (error) {
@@ -3094,6 +3140,35 @@ function updateHeaderUserDropdown(user, userProfile) {
     }
 }
 
+function updateChavrutaContextBar() {
+    const bar = document.getElementById('chavruta-context-bar');
+    const nameEl = document.getElementById('chavruta-context-name');
+    const switchBtn = document.getElementById('chavruta-switch-btn');
+    if (!bar || !nameEl) return;
+
+    const activeId = sessionStorage.getItem('activeChavrutaId');
+    if (!activeId || !_userChavrutas.length) {
+        bar.classList.add('hidden');
+        return;
+    }
+
+    const active = _userChavrutas.find(c => c.id === activeId);
+    nameEl.textContent = active ? (active.name || 'Study Group') : 'Study Group';
+    bar.classList.remove('hidden');
+    bar.style.display = 'flex';
+
+    // Only show switch button if user has multiple groups
+    if (switchBtn) {
+        switchBtn.style.display = _userChavrutas.length > 1 ? '' : 'none';
+        switchBtn.onclick = () => {
+            sessionStorage.removeItem('activeChavrutaId');
+            _studyRoomSelectionInFlight = false;
+            _studyRoomResolved = false; // allow re-selection
+            openStudyRoomPickerModal(_userChavrutas);
+        };
+    }
+}
+
 async function handleAuthStateChange(user) {
     updateCommentInputState(Boolean(user));
 
@@ -3102,6 +3177,8 @@ async function handleAuthStateChange(user) {
         if (didRedirectForSingleRoom) {
             return;
         }
+
+        updateChavrutaContextBar();
 
         // Set the user's email so display name can be extracted from it
         setCurrentUserEmail(user.email);
@@ -3129,6 +3206,17 @@ async function handleAuthStateChange(user) {
 
         // Upgrade the header with a user profile dropdown
         updateHeaderUserDropdown(user, userProfile);
+
+        // Cache user info for instant rendering on next page load
+        try {
+            let cachedFirstName = 'Account';
+            if (userProfile && userProfile.displayName && userProfile.displayName !== 'Friend') {
+                cachedFirstName = userProfile.displayName.split(' ')[0];
+            } else if (user.displayName) {
+                cachedFirstName = user.displayName.split(' ')[0];
+            }
+            sessionStorage.setItem('headerUserCache', JSON.stringify({ firstName: cachedFirstName, email: user.email || '' }));
+        } catch (_) {}
 
         // Reflect latest login status in UI
         updateCurrentUserStatusDisplay(userProfile, user.email);

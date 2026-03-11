@@ -180,9 +180,18 @@
     <!-- Header -->
     <header class="gradient-header py-6 shadow-lg relative overflow-hidden">
         <div class="pattern-overlay absolute inset-0"></div>
-        <div class="relative max-w-7xl mx-auto px-4 text-center">
-            <h1 class="font-heading text-white text-2xl sm:text-3xl font-bold tracking-wide">A Letter in the Scroll</h1>
-            <p class="text-blue-200 text-sm mt-1">Interactive Torah Study with Friends</p>
+        <div class="relative max-w-7xl mx-auto px-4 flex items-center justify-between">
+            <div class="flex-1"></div>
+            <div class="text-center">
+                <h1 class="font-heading text-white text-2xl sm:text-3xl font-bold tracking-wide">A Letter in the Scroll</h1>
+                <p class="text-blue-200 text-sm mt-1">Interactive Torah Study with Friends</p>
+            </div>
+            <div class="flex-1 flex justify-end">
+                <a href="/about" style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.45rem 1rem;border-radius:999px;font-size:0.82rem;font-weight:600;color:#fff;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);text-decoration:none;backdrop-filter:blur(4px);transition:background 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    About
+                </a>
+            </div>
         </div>
     </header>
 
@@ -242,8 +251,16 @@
                     <!-- Card Header with Logo -->
                     <div class="text-center pt-8 pb-4 px-6">
                         <img src="media/images/Icon.png" alt="A Letter in the Scroll" class="w-20 h-20 mx-auto rounded-xl shadow-md mb-4">
-                        <h2 class="font-heading text-3xl font-semibold text-slate-900">Welcome Back</h2>
-                        <p class="text-slate-600 text-sm mt-1">Sign in, then land on your dashboard home to manage rooms and enter study.</p>
+                        <h2 id="login-greeting" class="font-heading text-3xl font-semibold text-slate-900">Welcome</h2>
+                        <p id="login-subtitle" class="text-slate-600 text-sm mt-1">Create an account or sign in to start studying Torah together.</p>
+                        <script>
+                            try {
+                                if (localStorage.getItem('hasSignedIn')) {
+                                    document.getElementById('login-greeting').textContent = 'Welcome Back';
+                                    document.getElementById('login-subtitle').textContent = 'Sign in, then land on your dashboard home to manage rooms and enter study.';
+                                }
+                            } catch(e) {}
+                        </script>
                         <div class="decorative-line mt-4 mx-auto w-36"></div>
                     </div>
 
@@ -389,6 +406,9 @@
 
                 <p class="text-center text-gray-500 text-xs mb-2 italic font-heading">
                     Each of us is a letter in the scroll of Torah.
+                </p>
+                <p class="text-center mt-3 mb-1">
+                    <a href="/about" style="color:#2857be;font-size:0.85rem;font-weight:600;text-decoration:none;">Learn more about this project &rarr;</a>
                 </p>
             </div>
         </div>
@@ -690,6 +710,8 @@
             if (!user || authFlowInProgress) {
                 return;
             }
+
+            try { localStorage.setItem('hasSignedIn', '1'); } catch(e) {}
 
             syncUserProfile(user).finally(function() {
                 const inviteCode = resolveInviteCode();
@@ -1050,8 +1072,13 @@
 
             const user = auth.currentUser;
             if (!user) {
-                joinError.textContent = 'Please sign in first before joining a study group.';
-                joinError.classList.remove('hidden');
+                // Save the code so it's picked up after sign-in or account creation
+                savePendingInviteCode(code);
+                // Switch to the Create Account tab and prompt the user
+                switchTab('create');
+                showSuccess('Great! Create an account (or sign in) to join this study group. Your invite code has been saved.');
+                // Pre-fill the invite input so the code is visible
+                document.getElementById('invite-code-input').value = code;
                 return;
             }
 
@@ -1098,7 +1125,17 @@
         }
 
         document.getElementById('invite-code-input').addEventListener('input', function(e) {
-            const cleaned = sanitizeInviteCode(e.target.value);
+            var raw = e.target.value;
+            // If user pasted a link, extract the code from it
+            if (raw.includes('//') || raw.includes('invite')) {
+                var extracted = extractInviteCode(raw);
+                if (extracted.length === INVITE_CODE_LENGTH) {
+                    e.target.value = extracted;
+                    savePendingInviteCode(extracted);
+                    return;
+                }
+            }
+            var cleaned = sanitizeInviteCode(raw);
             if (e.target.value !== cleaned) {
                 e.target.value = cleaned;
             }

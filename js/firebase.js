@@ -169,13 +169,12 @@ function initAuth(onAuthReady) {
     } else {
       currentUser = null;
       console.log('No user authenticated');
-      // Redirect only from protected pages.
+      // Redirect unauthenticated users away from all app pages.
+      // Only the login page (/), invite (/invite), join (/join), and about (/about) are public.
       const path = window.location.pathname.replace(/\/+$/, '') || '/';
-      const protectedPaths = ['/dashboard', '/study', '/bookmarks', '/settings'];
-      const isProtectedPath = protectedPaths.some((protectedPath) =>
-        path === protectedPath || path.startsWith(protectedPath + '/')
-      );
-      if (isProtectedPath) {
+      const publicPaths = ['', '/', '/invite', '/join', '/about'];
+      const isPublic = publicPaths.includes(path);
+      if (!isPublic) {
         window.location.href = '/';
         return;
       }

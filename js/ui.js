@@ -95,6 +95,15 @@ export function showInfoPanel() {
     panel.classList.remove('hidden');
     requestAnimationFrame(() => panel.classList.add('is-visible'));
     document.body.style.overflow = 'hidden';
+    // Hide text size control (and close any portalled menu) while popup is open
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) {
+        textSizeCtrl.style.visibility = 'hidden';
+        textSizeCtrl.classList.remove('open');
+    }
+    // Also hide the menu if it was portalled to body
+    const textSizeMenu = document.querySelector('.text-size-menu');
+    if (textSizeMenu) textSizeMenu.style.display = 'none';
 }
 
 /**
@@ -109,6 +118,12 @@ export function hideInfoPanel() {
         infoContent.classList.remove('info-content-bookmarks');
     }
     document.body.style.overflow = 'auto';
+    // Restore text size control
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) textSizeCtrl.style.visibility = '';
+    // Restore portalled menu display (it manages its own open/close state)
+    const textSizeMenu = document.querySelector('.text-size-menu');
+    if (textSizeMenu) textSizeMenu.style.display = '';
 }
 
 /**

@@ -2,24 +2,38 @@
  * page-auth.js - Lightweight Firebase auth for secondary pages
  * Adds the user dropdown (name, About, Bookmarks, Settings, Sign Out)
  * WITHOUT community presence tracking.
+ *
+ * Uses sessionStorage cache so the pill renders instantly across tab switches.
  */
 
 import { initAuth, getUserInfo } from './firebase.js';
 import { getDisplayNameFromEmail } from './name-utils.js';
 
-// ── Inject skeleton pill immediately (prevents layout shift) ──────────────
-(function injectSkeleton() {
+const CACHE_KEY = 'headerUserCache';
+
+// ── Try to render from cache immediately (no skeleton flash) ────────────
+(function injectFromCacheOrSkeleton() {
     const headerActions = document.getElementById('header-actions');
     if (!headerActions) return;
-    const skeleton = document.createElement('div');
-    skeleton.id = 'header-user-dropdown-container';
-    skeleton.style.cssText = 'position:relative;display:flex;align-items:center;';
-    skeleton.innerHTML = `
-        <div class="header-user-pill" style="opacity:0;pointer-events:none;min-width:88px;" aria-hidden="true">
-            <div class="header-user-avatar"></div>
-            <span class="header-btn-text" style="min-width:42px;">&nbsp;</span>
-        </div>`;
-    headerActions.appendChild(skeleton);
+
+    let cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY)); } catch (_) { /* ignore */ }
+
+    if (cached && cached.firstName && cached.email) {
+        // Render the real dropdown instantly from cache
+        buildHeaderDropdown(cached.firstName, cached.email);
+    } else {
+        // No cache — show skeleton pill to reserve space
+        const skeleton = document.createElement('div');
+        skeleton.id = 'header-user-dropdown-container';
+        skeleton.style.cssText = 'position:relative;display:flex;align-items:center;';
+        skeleton.innerHTML = `
+            <div class="header-user-pill" style="opacity:0;pointer-events:none;min-width:88px;" aria-hidden="true">
+                <div class="header-user-avatar"></div>
+                <span class="header-btn-text" style="min-width:42px;">&nbsp;</span>
+            </div>`;
+        headerActions.appendChild(skeleton);
+    }
 })();
 
 function buildHeaderDropdown(firstName, email) {
@@ -31,6 +45,11 @@ function buildHeaderDropdown(firstName, email) {
         const el = document.getElementById(id);
         if (el) el.remove();
     });
+    // Also remove any body-level dropdown/backdrop from a previous build
+    const oldDrop = document.getElementById('header-user-dropdown');
+    const oldBack = document.getElementById('header-dropdown-backdrop');
+    if (oldDrop) oldDrop.remove();
+    if (oldBack) oldBack.remove();
 
     const container = document.createElement('div');
     container.id = 'header-user-dropdown-container';
@@ -74,12 +93,6 @@ function buildHeaderDropdown(firstName, email) {
                 </div>
             </div>
             <div class="header-dropdown-section">
-                <a href="/about" class="header-dropdown-item" role="menuitem">
-                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    About
-                </a>
                 <a href="/bookmarks" id="my-bookmarks-btn" class="header-dropdown-item" role="menuitem">
                     <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
@@ -145,13 +158,17 @@ function buildHeaderDropdown(firstName, email) {
     });
 
     logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem(CACHE_KEY);
         window.location.href = '/';
     });
 }
 
 // Initialize - initAuth will redirect to index.html if not signed in
 initAuth(async (user) => {
-    if (!user) return;
+    if (!user) {
+        sessionStorage.removeItem(CACHE_KEY);
+        return;
+    }
     const email = user.email || '';
 
     // Try Firestore displayName first, fall back to email-derived name
@@ -168,5 +185,11 @@ initAuth(async (user) => {
         firstName = fullName.split(' ')[0];
     }
 
+    // Cache for instant rendering on next page load
+    try {
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ firstName, email }));
+    } catch (_) { /* ignore */ }
+
+    // Rebuild dropdown with authoritative data (may update cache-rendered version)
     buildHeaderDropdown(firstName, email);
 });
