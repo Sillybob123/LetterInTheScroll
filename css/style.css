@@ -6163,6 +6163,14 @@ body.sidebar-nav-enabled.sidebar-nav-collapsed .site-sidebar .text-size-menu::be
    USER DROPDOWN — Pill trigger + panel
    ═══════════════════════════════════════════════ */
 
+/* ─── Pill container — reserves space to prevent header shift ─── */
+#header-user-dropdown-container {
+    min-width: 96px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
 /* ─── Trigger pill ─── */
 .header-user-pill {
     display: inline-flex;
@@ -6181,6 +6189,12 @@ body.sidebar-nav-enabled.sidebar-nav-collapsed .site-sidebar .text-size-menu::be
     min-height: 36px;
     font-family: inherit;
     position: relative;
+    animation: pillFadeIn 0.3s ease both;
+}
+
+@keyframes pillFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 .header-user-pill:hover {

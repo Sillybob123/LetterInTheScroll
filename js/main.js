@@ -468,6 +468,10 @@ function isStudyPagePath() {
     return normalizedPath === '/study' || normalizedPath === '/study/index.html';
 }
 
+// Guard: prevent enforceStudyRoomSelection from running concurrently
+// (onAuthStateChanged can fire multiple times)
+let _studyRoomSelectionInFlight = false;
+
 function closeStudyRoomPickerModal() {
     const modal = document.getElementById('study-room-picker-modal');
     if (!modal || modal.classList.contains('hidden')) {
@@ -535,6 +539,10 @@ async function enforceStudyRoomSelection(user) {
     if (!user || !isStudyPagePath()) {
         return false;
     }
+    if (_studyRoomSelectionInFlight) {
+        return false;
+    }
+    _studyRoomSelectionInFlight = true;
 
     try {
         const membershipsQuery = query(
@@ -601,6 +609,20 @@ async function enforceStudyRoomSelection(user) {
 
 async function init() {
     try {
+        // ── Phase 0: Inject skeleton pill to reserve header space ──
+        (function injectSkeleton() {
+            const ha = document.getElementById('header-actions');
+            if (!ha || document.getElementById('header-user-dropdown-container')) return;
+            const sk = document.createElement('div');
+            sk.id = 'header-user-dropdown-container';
+            sk.innerHTML = `
+                <div class="header-user-pill" style="opacity:0;pointer-events:none;min-width:88px;" aria-hidden="true">
+                    <div class="header-user-avatar"></div>
+                    <span class="header-btn-text" style="min-width:42px;">&nbsp;</span>
+                </div>`;
+            ha.appendChild(sk);
+        })();
+
         // ── Phase 1: Instant UI — render cached parsha text before auth ──
         setState({ allParshas: TORAH_PARSHAS });
 
@@ -2951,9 +2973,15 @@ function updateHeaderUserDropdown(user, userProfile) {
     let dropdownContainer = document.getElementById('header-user-dropdown-container');
     const oldLogoutBtn = document.getElementById('logout-btn');
 
+    // Detect skeleton placeholder (has no real menu button)
+    const isSkeleton = dropdownContainer && !dropdownContainer.querySelector('#header-user-menu-btn');
+
     if (user) {
-        if (!dropdownContainer) {
-            // Remove the old logout button if it exists and hasn't been replaced
+        if (!dropdownContainer || isSkeleton) {
+            // Remove skeleton or old logout button
+            if (isSkeleton && dropdownContainer) {
+                dropdownContainer.remove();
+            }
             if (oldLogoutBtn && oldLogoutBtn.parentElement === headerActions) {
                 oldLogoutBtn.remove();
             }
@@ -3011,12 +3039,6 @@ function updateHeaderUserDropdown(user, userProfile) {
                         </div>
                     </div>
                     <div class="header-dropdown-section">
-                        <a href="/about" class="header-dropdown-item" role="menuitem">
-                            <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            About
-                        </a>
                         <a href="/bookmarks" id="my-bookmarks-btn" class="header-dropdown-item" role="menuitem">
                             <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
