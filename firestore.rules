@@ -193,6 +193,25 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════════════════
+    // NEWSLETTER SUBSCRIBERS
+    // ═══════════════════════════════════════════════════════
+    match /newsletterSubscribers/{docId} {
+      // Only readable from Firebase console (protects subscriber privacy)
+      allow read: if false;
+
+      // Anyone can subscribe (using email as doc ID for natural dedup)
+      // Allows create and also update (so re-subscribing overwrites silently)
+      allow create, update: if
+        request.resource.data.keys().hasOnly(['email', 'subscribedAt', 'source']) &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.email.size() <= 254 &&
+        request.resource.data.source is string;
+
+      allow delete: if false;
+    }
+
+    // ═══════════════════════════════════════════════════════
     // DENY ALL OTHER ACCESS
     // ═══════════════════════════════════════════════════════
     match /{document=**} {
