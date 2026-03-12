@@ -186,7 +186,8 @@ service cloud.firestore {
         allow create: if isChavrutaMember(chavrutaId) &&
           request.resource.data.userId == request.auth.uid;
 
-        allow update: if isChavrutaMember(chavrutaId);
+        allow update: if isChavrutaMember(chavrutaId) &&
+          resource.data.userId == request.auth.uid;
 
         allow delete: if false;
       }
@@ -196,9 +197,9 @@ service cloud.firestore {
     // NEWSLETTER SUBSCRIBERS
     // ═══════════════════════════════════════════════════════
     match /newsletterSubscribers/{docId} {
-      // Authenticated users can read any newsletter doc.
-      // The doc ID is the sanitized email — only the subscriber knows their own ID.
-      allow read: if isAuth();
+      // Users can only read their own subscription entry.
+      allow read: if isAuth() &&
+        resource.data.email == request.auth.token.email;
 
       // Anyone can subscribe (using email as doc ID for natural dedup)
       // Allows create and also update (so re-subscribing overwrites silently)
@@ -209,8 +210,9 @@ service cloud.firestore {
         request.resource.data.email.size() <= 254 &&
         request.resource.data.source is string;
 
-      // Authenticated users can delete their own entry
-      allow delete: if isAuth();
+      // Users can only delete their own subscription entry
+      allow delete: if isAuth() &&
+        resource.data.email == request.auth.token.email;
     }
 
     // ═══════════════════════════════════════════════════════
