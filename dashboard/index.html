@@ -2153,7 +2153,7 @@
         </section>
 
         <!-- ═══ NEWSLETTER SIGNUP ═══ -->
-        <section class="section-card dash-section-shell fade-up fd5" style="padding:0;overflow:hidden;border:none;background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%)">
+        <section id="dash-nl-section" class="section-card dash-section-shell fade-up fd5" style="padding:0;overflow:hidden;border:none;background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%)">
             <div class="relative px-6 sm:px-10 py-8 sm:py-10 text-center">
                 <p class="text-amber-300 text-xs font-bold uppercase tracking-widest mb-2">Weekly Dvar Torah</p>
                 <h2 style="font-family:'Fraunces',serif" class="text-2xl sm:text-3xl font-bold text-white mb-2">Torah straight to your inbox</h2>
@@ -4060,6 +4060,13 @@
     };
 
     /* ════ NEWSLETTER SIGNUP (DASHBOARD) ════ */
+    (function() {
+        if (localStorage.getItem('nlSubscribed')) {
+            var sec = document.getElementById('dash-nl-section');
+            if (sec) sec.style.display = 'none';
+        }
+    })();
+
     async function handleDashNewsletterSignup(e) {
         e.preventDefault();
         var email = document.getElementById('dash-nl-email').value.trim().toLowerCase();
@@ -4097,6 +4104,7 @@
                 source: 'dashboard'
             });
 
+            localStorage.setItem('nlSubscribed', '1');
             successEl.textContent = "You're in! Look out for your first Dvar Torah this Friday.";
             successEl.classList.remove('hidden');
             document.getElementById('dash-nl-form').classList.add('hidden');

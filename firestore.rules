@@ -196,8 +196,8 @@ service cloud.firestore {
     // NEWSLETTER SUBSCRIBERS
     // ═══════════════════════════════════════════════════════
     match /newsletterSubscribers/{docId} {
-      // Only readable from Firebase console (protects subscriber privacy)
-      allow read: if false;
+      // Authenticated users can read their own subscription (email must match)
+      allow read: if isAuth() && resource.data.email == request.auth.token.email;
 
       // Anyone can subscribe (using email as doc ID for natural dedup)
       // Allows create and also update (so re-subscribing overwrites silently)
@@ -208,7 +208,8 @@ service cloud.firestore {
         request.resource.data.email.size() <= 254 &&
         request.resource.data.source is string;
 
-      allow delete: if false;
+      // Authenticated users can unsubscribe (delete) their own entry
+      allow delete: if isAuth() && resource.data.email == request.auth.token.email;
     }
 
     // ═══════════════════════════════════════════════════════
