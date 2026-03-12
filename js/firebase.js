@@ -975,6 +975,13 @@ async function addDailyQuoteBookmark(userId, quoteId, quoteData) {
       timestamp: serverTimestamp()
     };
 
+    // Delete first to avoid update-denied (rules allow create, not update)
+    await Promise.all(
+      chavrutaIds.map((chavrutaId) =>
+        deleteDoc(doc(db, 'chavrutas', chavrutaId, 'dailyQuoteBookmarks', bookmarkKey)).catch(() => null)
+      )
+    );
+
     await Promise.all(
       chavrutaIds.map((chavrutaId) =>
         setDoc(doc(db, 'chavrutas', chavrutaId, 'dailyQuoteBookmarks', bookmarkKey), bookmarkPayload)
@@ -1865,6 +1872,7 @@ export {
   isDailyQuoteBookmarked,
   getUserDailyQuoteBookmarks,
   getCommunityQuoteBookmarks,
+  getUserChavrutaIds,
   getDailyQuoteBookmarkCount,
   getDailyQuoteInteractors,
   updateUserPresence,

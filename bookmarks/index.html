@@ -397,7 +397,8 @@
             getCurrentUserId,
             getUserBookmarks,
             getUserDailyQuoteBookmarks,
-            getCommunityQuoteBookmarks
+            getCommunityQuoteBookmarks,
+            getUserChavrutaIds
         } from './js/firebase.js';
 
         function escapeHtml(value) {
@@ -581,6 +582,10 @@
             loading.style.display = 'block';
 
             try {
+                // Pre-warm chavruta cache so all parallel queries share it
+                await getUserChavrutaIds(userId);
+
+                // Fire all queries in parallel — cache is already warm
                 const [verseBookmarks, quoteBookmarks, communityQuotes] = await Promise.all([
                     getUserBookmarks(userId),
                     getUserDailyQuoteBookmarks(userId),

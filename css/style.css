@@ -2616,15 +2616,12 @@ select {
     font-weight: 800;
     line-height: 1.15;
     margin: 0;
-    color: #ffffff;
+    color: #e2e8f0;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background: linear-gradient(to right, #ffffff, #e2e8f0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .header-subtitle {
@@ -5747,6 +5744,20 @@ body.sidebar-nav-enabled .site-sidebar-account-section .site-sidebar-signout {
 body.sidebar-nav-enabled .site-sidebar-account-section .site-sidebar-signout:hover {
     background: rgba(254, 226, 226, 0.55);
     border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* ── User pill inside sidebar — dark text on bright background ── */
+body.sidebar-nav-enabled .site-sidebar .header-user-pill {
+    color: #1e3a8a;
+    background: rgba(30, 58, 138, 0.08);
+    border-color: rgba(30, 58, 138, 0.18);
+}
+body.sidebar-nav-enabled .site-sidebar .header-user-pill:hover {
+    background: rgba(30, 58, 138, 0.14);
+    border-color: rgba(30, 58, 138, 0.28);
+}
+body.sidebar-nav-enabled .site-sidebar .header-user-chevron {
+    color: #1e3a8a;
 }
 
 /* ── Secondary nav buttons — glass pills ── */
