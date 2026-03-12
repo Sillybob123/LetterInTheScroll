@@ -598,44 +598,7 @@
         height: 1.9rem !important;
     }
 
-    /* Daily inspiration compact on dashboard */
-    .dashboard-body #daily-inspiration {
-        border-radius: 1rem !important;
-    }
-
-    .dashboard-body #daily-inspiration .daily-inspiration-content {
-        padding: 0.85rem 0.75rem !important;
-    }
-
-    .dashboard-body .dash-hero-eyebrow {
-        font-size: 0.58rem !important;
-        margin-bottom: 0.65rem !important;
-    }
-
-    .dashboard-body .dash-hero-hebrew {
-        font-size: clamp(1rem, 2.5vw, 1.5rem) !important;
-        margin-bottom: 0.55rem !important;
-    }
-
-    .dashboard-body .dash-hero-translation {
-        font-size: 0.8rem !important;
-        padding-left: 0.65rem !important;
-        margin-bottom: 0.65rem !important;
-    }
-
-    .dashboard-body .dash-hero-reflection-box {
-        padding: 0.6rem 0.7rem !important;
-        margin-bottom: 0.65rem !important;
-    }
-
-    .dashboard-body .dash-hero-reflection {
-        font-size: 0.72rem !important;
-    }
-
-    .dashboard-body .dash-hero-source {
-        font-size: 0.55rem !important;
-        padding: 0.2rem 0.6rem !important;
-    }
+    /* Daily inspiration — defer to dashboard inline styles for compact mobile */
 
     /* Explore cards grid */
     .dashboard-body .dash-explore-grid {
