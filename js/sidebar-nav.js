@@ -149,6 +149,14 @@
 
         document.body.appendChild(sidebar);
 
+        // ── Move user pill/dropdown to bottom of sidebar (above sign out) ──
+        var userPill = clonedActions.querySelector('.header-user-pill');
+        var userDropdownContainer = clonedActions.querySelector('#header-user-dropdown-container');
+        var pillToMove = userDropdownContainer || (userPill ? userPill.parentElement : null);
+        if (pillToMove && accountSection.contains(signOutBtn)) {
+            accountSection.insertBefore(pillToMove, signOutBtn);
+        }
+
         // ── Highlight the active page in the sidebar clone ──
         (function highlightActivePage() {
             var path = window.location.pathname.replace(/\/$/, '') || '/';
