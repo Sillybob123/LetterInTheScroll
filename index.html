@@ -469,8 +469,8 @@
                         </button>
                     </div>
 
-                    <!-- reCAPTCHA v2 checkbox -->
-                    <div class="flex justify-center mt-2">
+                    <!-- reCAPTCHA v2 checkbox (hidden until first submit attempt) -->
+                    <div id="nl-captcha-wrap" class="hidden flex justify-center mt-2">
                         <div class="g-recaptcha" data-sitekey="6LepOYgsAAAAAH5vqu3hk9iVfQJZhqe9Dymj1ATi" data-theme="dark"></div>
                     </div>
                 </form>
@@ -1270,7 +1270,12 @@
                 return;
             }
 
-            // reCAPTCHA v2 check
+            // reCAPTCHA v2 check — reveal widget on first attempt, require it on subsequent attempts
+            var captchaWrap = document.getElementById('nl-captcha-wrap');
+            if (captchaWrap.classList.contains('hidden')) {
+                captchaWrap.classList.remove('hidden');
+                return;
+            }
             if (!grecaptcha.getResponse()) {
                 errEl.textContent = 'Please check the "I\'m not a robot" box.';
                 errEl.classList.remove('hidden');
