@@ -58,30 +58,6 @@
     (function(){try{var c=JSON.parse(sessionStorage.getItem('presenceCache'));if(!c||!c.html||Date.now()-c.ts>1800000)return;var l=document.getElementById('header-online-users-list');var s=document.getElementById('header-online-section');var b=document.getElementById('community-status-bar');if(l&&s&&b){l.innerHTML=c.html;s.classList.remove('hidden');b.classList.remove('hidden')}}catch(e){}})();
     </script>
 
-    <!-- Daily Inspiration -->
-    <section id="daily-inspiration" class="daily-inspiration-header-section">
-        <div class="container mx-auto px-4 py-1">
-            <div class="daily-inspiration-card">
-                <div class="daily-inspiration-content">
-                    <div class="daily-inspiration-main">
-                        <div class="daily-inspiration-quotes">
-                            <span class="quote-mark quote-mark-start">&ldquo;</span>
-                            <span data-quote-hebrew class="daily-inspiration-hebrew">Loading today's teaching...</span>
-                            <span class="quote-divider">|</span>
-                            <span data-quote-translation class="daily-inspiration-translation"></span>
-                            <span class="quote-mark quote-mark-end">&rdquo;</span>
-                            <span data-quote-source class="daily-inspiration-source"></span>
-                        </div>
-                    </div>
-                    <div class="daily-inspiration-explanation-section">
-                        <span class="daily-inspiration-explanation-label">Explanation:</span>
-                        <p data-quote-reflection class="daily-inspiration-reflection">An inspiring reflection will appear here each day.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Back to Songs and Poems Button -->
     <div class="container mx-auto px-4 py-4">
         <a href="/songs/" class="back-to-songs-link">
@@ -170,7 +146,6 @@
     </footer>
 
     <script src="/js/shabbat.js"></script>
-    <script src="/js/daily-inspiration.js"></script>
     <script src="/js/song-detail.js"></script>
     <script src="/js/header-fallback.js"></script>
     <script src="/js/sidebar-nav.js"></script>

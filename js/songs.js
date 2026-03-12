@@ -1,6 +1,6 @@
 // songs.js - render the Songs and Poems page from songs.json
 
-const SONGS_URL_CANDIDATES = ["/data/songs.json", "data/songs.json"];
+const SONGS_URL_CANDIDATES = ["/data/songs-index.json", "data/songs-index.json"];
 const DVAR_ARCHIVE_URL_CANDIDATES = ["/data/past-dvar-torahs.json", "data/past-dvar-torahs.json"];
 let allEntries = [];
 let activeTypeFilter = "all";
@@ -48,17 +48,6 @@ function getTypeLabel(type = "all") {
 }
 
 function buildSearchText(entry) {
-  const lyricText = Array.isArray(entry.lyrics)
-    ? entry.lyrics
-        .map(line => [line.hebrew, line.transliteration, line.english].filter(Boolean).join(" "))
-        .join(" ")
-    : "";
-
-  const poemText = Array.isArray(entry.poem_lines) ? entry.poem_lines.filter(Boolean).join(" ") : "";
-  const poemHebrewText = Array.isArray(entry.poem_hebrew_lines)
-    ? entry.poem_hebrew_lines.filter(Boolean).join(" ")
-    : "";
-
   return normalizeText(
     [
       entry.title_hebrew,
@@ -66,10 +55,7 @@ function buildSearchText(entry) {
       entry.artist,
       entry.overview,
       entry.published_date,
-      entry.category,
-      lyricText,
-      poemText,
-      poemHebrewText
+      entry.category
     ]
       .filter(Boolean)
       .join(" ")
@@ -441,6 +427,19 @@ function loadAppleMusicEmbed() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadEntries();
-  loadPastWeeklyDvarTorahs();
   loadAppleMusicEmbed();
+
+  // Defer dvar Torah loading until section is near viewport
+  const dvarSection = document.querySelector(".past-dvar-section");
+  if (dvarSection && "IntersectionObserver" in window) {
+    const obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        obs.disconnect();
+        loadPastWeeklyDvarTorahs();
+      }
+    }, { rootMargin: "200px" });
+    obs.observe(dvarSection);
+  } else {
+    loadPastWeeklyDvarTorahs();
+  }
 });

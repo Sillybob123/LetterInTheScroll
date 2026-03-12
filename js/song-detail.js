@@ -1,6 +1,8 @@
 // song-detail.js - display individual song and poem details
 
-const SONGS_URL = "/data/songs.json";
+function getSongUrl(index) {
+  return "/data/songs/" + index + ".json";
+}
 
 function escapeHtml(value = "") {
   return String(value)
@@ -315,19 +317,13 @@ async function loadAndDisplaySong() {
   }
 
   try {
-    const response = await fetch(SONGS_URL);
+    const response = await fetch(getSongUrl(songIndex));
     if (!response.ok) {
-      throw new Error("Failed to load songs and poems");
+      throw new Error("Failed to load song " + songIndex);
     }
 
-    const entries = await response.json();
-
-    if (!Array.isArray(entries) || songIndex >= entries.length) {
-      showError();
-      return;
-    }
-
-    displaySong(entries[songIndex]);
+    const entry = await response.json();
+    displaySong(entry);
   } catch (error) {
     console.error("Error loading entry:", error);
     showError();
