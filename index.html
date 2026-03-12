@@ -161,6 +161,26 @@
             .mission-card {
                 padding-top: 2rem;
                 padding-bottom: 2rem;
+                order: 2;
+            }
+            /* Show auth card first on mobile */
+            .login-right-column {
+                order: 1;
+            }
+        }
+        @media (max-width: 640px) {
+            /* Fix About button placement on mobile login header */
+            .login-header-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .login-header-inner .flex-1:first-child {
+                display: none;
+            }
+            .login-header-inner .flex-1:last-child {
+                justify-content: center;
+                width: 100%;
             }
         }
     </style>
@@ -180,7 +200,7 @@
     <!-- Header -->
     <header class="gradient-header py-6 shadow-lg relative overflow-hidden">
         <div class="pattern-overlay absolute inset-0"></div>
-        <div class="relative max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <div class="relative max-w-7xl mx-auto px-4 flex items-center justify-between login-header-inner">
             <div class="flex-1"></div>
             <div class="text-center">
                 <h1 class="font-heading text-white text-2xl sm:text-3xl font-bold tracking-wide">A Letter in the Scroll</h1>
@@ -243,7 +263,7 @@
                 </div>
             </section>
 
-            <div class="w-full max-w-xl mx-auto lg:max-w-none space-y-6">
+            <div class="w-full max-w-xl mx-auto lg:max-w-none space-y-6 login-right-column">
 
                 <!-- Auth Card -->
                 <div class="auth-card rounded-3xl overflow-hidden">

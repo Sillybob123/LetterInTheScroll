@@ -135,9 +135,9 @@
         }
 
         .dashboard-body .header-container {
-            max-width: 78rem;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0.95rem 1rem;
+            padding: 1rem 1.5rem;
         }
 
         .dashboard-body .header-title {
@@ -257,19 +257,6 @@
             right: -170px;
         }
 
-        .dash-hero-deco {
-            position: absolute;
-            top: -1.6rem;
-            right: 0.35rem;
-            font-family: 'Fraunces', serif;
-            font-size: clamp(6.4rem, 14vw, 11.4rem);
-            line-height: 1;
-            color: rgba(255, 255, 255, 0.05);
-            user-select: none;
-            pointer-events: none;
-            z-index: 2;
-        }
-
         #daily-inspiration .daily-inspiration-content {
             position: relative;
             z-index: 3;
@@ -277,7 +264,7 @@
             border: 1px solid rgba(219, 235, 255, 0.22);
             border-radius: calc(var(--radius-xl) - 0.2rem);
             background: linear-gradient(146deg, rgba(14, 31, 59, 0.58), rgba(19, 74, 94, 0.52));
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: none;
             padding: clamp(1.3rem, 3.1vw, 2.15rem) clamp(1.1rem, 4vw, 2.6rem);
             transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
         }
@@ -1141,8 +1128,7 @@
 
         @media (max-width: 640px) {
             .dashboard-body .header-container {
-                padding-left: 0.7rem;
-                padding-right: 4rem; /* room for hamburger */
+                padding: 0.9rem 1rem;
             }
 
             .dashboard-main {
@@ -1155,16 +1141,159 @@
                 gap: 0.9rem;
             }
 
+            /* ══════════════════════════════════════════
+               MOBILE DAILY QUOTE — inspirational mini-card
+               ══════════════════════════════════════════ */
+
+            #daily-inspiration {
+                all: unset !important;
+                display: block !important;
+                position: relative !important;
+                border-radius: 10px !important;
+                background: linear-gradient(135deg, #0f2347 0%, #1a3a6e 60%, #1e4f7a 100%) !important;
+                border: none !important;
+                box-shadow: 0 2px 8px rgba(10,25,55,0.18) !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                color: #e8f0ff !important;
+                overflow: hidden !important;
+            }
+
+            #daily-inspiration::before,
+            #daily-inspiration::after { display: none !important; }
+
             #daily-inspiration .daily-inspiration-content {
-                padding: 1rem 0.86rem;
+                all: unset !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 8px 10px 7px !important;
+                padding-right: 28px !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: none !important;
             }
 
-            .dash-hero-translation {
-                font-size: 0.84rem;
+            /* Eyebrow — tiny gold accent */
+            #daily-inspiration .dash-hero-eyebrow {
+                all: unset !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                font-size: 8px !important;
+                font-weight: 800 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.14em !important;
+                color: #f4c96f !important;
+                margin-bottom: 4px !important;
+            }
+            #daily-inspiration .dash-hero-eyebrow::before {
+                display: none !important;
             }
 
-            .dash-hero-reflection {
-                font-size: 0.75rem;
+            /* Hebrew */
+            #daily-inspiration .dash-hero-hebrew {
+                all: unset !important;
+                font-family: 'Fraunces', serif !important;
+                font-size: 12.5px !important;
+                line-height: 1.4 !important;
+                color: #f7fbff !important;
+                font-weight: 500 !important;
+                direction: rtl !important;
+                display: block !important;
+                margin-bottom: 2px !important;
+            }
+
+            /* Translation */
+            #daily-inspiration .dash-hero-translation {
+                all: unset !important;
+                font-size: 10.5px !important;
+                line-height: 1.35 !important;
+                color: rgba(210,228,255,0.85) !important;
+                font-style: italic !important;
+                display: block !important;
+                margin-bottom: 2px !important;
+                padding-left: 7px !important;
+                border-left: 2px solid rgba(244,201,111,0.4) !important;
+            }
+
+            /* Eyebrow */
+            #daily-inspiration .dash-hero-eyebrow { order: 1 !important; }
+            #daily-inspiration .dash-hero-hebrew { order: 2 !important; }
+            #daily-inspiration .dash-hero-translation { order: 3 !important; }
+
+            /* Source — tiny gold tag, right after the quote */
+            #daily-inspiration .dash-hero-actions {
+                all: unset !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                margin-top: 3px !important;
+                order: 4 !important;
+            }
+            #daily-inspiration .dash-hero-source {
+                all: unset !important;
+                font-size: 8px !important;
+                font-weight: 700 !important;
+                color: #f4c96f !important;
+                letter-spacing: 0.06em !important;
+            }
+
+            /* Reflection — full text, separated from source */
+            #daily-inspiration .dash-hero-reflection-box {
+                all: unset !important;
+                display: block !important;
+                margin-top: 6px !important;
+                padding-top: 5px !important;
+                border-top: 1px solid rgba(200,220,255,0.12) !important;
+                margin-bottom: 3px !important;
+                order: 5 !important;
+            }
+            #daily-inspiration .dash-hero-reflection-icon { display: none !important; }
+            #daily-inspiration .dash-hero-reflection {
+                all: unset !important;
+                font-size: 9.5px !important;
+                line-height: 1.4 !important;
+                color: rgba(200,220,245,0.72) !important;
+                display: block !important;
+            }
+
+            /* Bookmark — floating top-right */
+            #daily-inspiration .daily-quote-bookmark-btn {
+                position: absolute !important;
+                top: 5px !important;
+                right: 5px !important;
+                font-size: 0 !important;
+                padding: 3px !important;
+                min-width: 0 !important;
+                border-radius: 4px !important;
+                border: 1px solid rgba(200,220,255,0.2) !important;
+                background: rgba(255,255,255,0.08) !important;
+                color: rgba(200,220,255,0.6) !important;
+                box-shadow: none !important;
+                z-index: 10 !important;
+                line-height: 0 !important;
+                cursor: pointer !important;
+            }
+            #daily-inspiration .daily-quote-bookmark-btn:active { transform: scale(0.88) !important; }
+            #daily-inspiration .daily-quote-bookmark-btn.is-active {
+                background: rgba(244,201,111,0.18) !important;
+                color: #f4c96f !important;
+                border-color: rgba(244,201,111,0.35) !important;
+            }
+            #daily-inspiration .daily-quote-bookmark-btn .bookmark-icon {
+                width: 12px !important;
+                height: 12px !important;
+            }
+            #daily-inspiration .daily-quote-bookmark-count { display: none !important; }
+
+            #daily-inspiration .dash-community-line {
+                font-size: 8px !important;
+                color: rgba(200,220,255,0.4) !important;
+                margin-top: 6px !important;
+                padding-top: 5px !important;
+                border-top: 1px solid rgba(200,220,255,0.1) !important;
+                line-height: 1.3 !important;
+                order: 6 !important;
             }
 
             .dash-welcome {
@@ -1844,58 +1973,8 @@
 <body class="dashboard-body min-h-screen">
 
 <!-- ═══ HEADER ═══ -->
-<header class="header-main relative z-30">
-    <div class="header-container">
-        <div class="header-branding-section">
-            <a id="home-branding" href="/dashboard" aria-label="Go to dashboard home" class="header-branding-button">
-                <div class="header-text">
-                    <h1 class="header-title">A Letter in the Scroll</h1>
-                    <p class="header-subtitle">Interactive Weekly Portion Study &amp; Discussion</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="header-actions-wrapper">
-            <div id="header-actions" class="header-actions">
-                <a href="/dashboard" aria-current="page" class="header-btn header-btn-primary" title="Dashboard home">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"></path>
-                    </svg>
-                    <span class="header-btn-text">Home</span>
-                </a>
-                <a id="go-to-weekly" href="/study" class="header-btn header-btn-secondary" title="Open study room">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    <span class="header-btn-text">Study</span>
-                </a>
-                <a href="/holidays" class="header-btn header-btn-secondary" title="Jewish holidays">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <rect x="3" y="5" width="18" height="16" rx="2" ry="2" stroke-width="2"></rect>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3v4M8 3v4M3 11h18"></path>
-                    </svg>
-                    <span class="header-btn-text">Holidays</span>
-                </a>
-                <a href="/prayers" class="header-btn header-btn-secondary" title="Important prayers">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l2.4 4.9L20 9l-4 3.9.9 5.6L12 16l-4.9 2.5.9-5.6L4 9l5.6-1.1L12 3z"></path>
-                    </svg>
-                    <span class="header-btn-text">Prayers</span>
-                </a>
-                <a href="/songs" class="header-btn header-btn-secondary" title="Songs and poems">
-                    <svg class="header-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-2v13"></path>
-                        <circle cx="6" cy="18" r="3" stroke-width="2"></circle>
-                        <circle cx="18" cy="16" r="3" stroke-width="2"></circle>
-                    </svg>
-                    <span class="header-btn-text">Songs</span>
-                </a>
-
-                <!-- User dropdown built by onAuthStateChanged below -->
-            </div>
-        </div>
-    </div>
-</header>
+<div id="shared-header-mount"></div>
+    <script src="/js/shared-header.js"></script>
 
 <!-- ═══ MAIN ═══ -->
 <main class="dashboard-main">
@@ -1913,7 +1992,6 @@
         </section>
 
         <section id="daily-inspiration" class="fade-up fd1">
-            <div class="dash-hero-deco" aria-hidden="true">ת</div>
             <div class="dash-hero-inner daily-inspiration-content">
                 <div class="dash-hero-eyebrow">Today's Teaching</div>
                 <p data-quote-hebrew class="dash-hero-hebrew"></p>
@@ -2166,6 +2244,25 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
+    // ── Instant header dropdown from cache ──
+    (function() {
+        try {
+            var c = JSON.parse(sessionStorage.getItem('headerUserCache'));
+            if (c && c.firstName && c.email) {
+                var ha = document.getElementById('header-actions');
+                if (ha && !document.getElementById('header-user-dropdown-container')) {
+                    // Will be replaced by buildDashboardHeaderDropdown once auth fires
+                    var sk = document.createElement('div');
+                    sk.id = 'header-user-dropdown-container';
+                    sk.style.cssText = 'position:relative;display:flex;align-items:center;';
+                    var ini = c.firstName.charAt(0).toUpperCase();
+                    sk.innerHTML = '<button class="header-user-pill" style="pointer-events:none;" aria-hidden="true"><div class="header-user-avatar">' + ini + '</div><span class="header-btn-text">' + c.firstName + '</span></button>';
+                    ha.appendChild(sk);
+                }
+            }
+        } catch(_) {}
+    })();
+
     const loadingStateEl = document.getElementById('loading-state');
     const mainContentEl = document.getElementById('main-content');
 
@@ -2203,6 +2300,7 @@
     }
     const auth = firebase.auth();
     const db   = firebase.firestore();
+    const FieldValue = firebase.firestore.FieldValue;
 
     /* ── State ── */
     let currentUser = null, confirmResolve = null;
@@ -2228,7 +2326,13 @@
         if (!dashboardShellRevealed) {
             revealDashboardShell();
         }
-    }, 7000);
+    }, 3000);
+
+    // Fast reveal: if we have cached user info, show shell immediately
+    // while waiting for Firebase Auth to fully resolve.
+    if (sessionStorage.getItem('headerUserCache') || auth.currentUser) {
+        revealDashboardShell();
+    }
 
     /* ════ HEADER DROPDOWN (matches page-auth.js) ════ */
     function buildDashboardHeaderDropdown(firstName, email) {
@@ -2282,12 +2386,6 @@
                 </div>
             </div>
             <div class="header-dropdown-section">
-                <a href="/about" class="header-dropdown-item" role="menuitem">
-                    <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    About
-                </a>
                 <a href="/bookmarks" class="header-dropdown-item" role="menuitem">
                     <svg class="header-dropdown-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
@@ -2422,6 +2520,9 @@
         // Build header user dropdown (same as page-auth.js)
         buildDashboardHeaderDropdown(firstName, user.email || '');
 
+        // Cache for instant rendering on next page load
+        try { sessionStorage.setItem('headerUserCache', JSON.stringify({ firstName: firstName, email: user.email || '' })); } catch(_) {}
+
         // URL params
         const p = new URLSearchParams(window.location.search);
         const jId = p.get('join');
@@ -2446,7 +2547,7 @@
         refreshDailyQuoteBookmarkState();
     });
 
-    function signOutUser() { auth.signOut().then(() => window.location.href = '/'); }
+    function signOutUser() { sessionStorage.removeItem('headerUserCache'); auth.signOut().then(() => window.location.href = '/'); }
 
     /* ════ PANEL TABS ════ */
     function showPanel(tab) {
@@ -2480,7 +2581,7 @@
     }
     function inviteLink(code) {
         const normalizedCode = sanitizeInviteCode(String(code || ''));
-        const url = new URL('/invite', window.location.origin);
+        const url = new URL('/join', window.location.origin);
         if (normalizedCode.length === INVITE_CODE_LENGTH) {
             url.searchParams.set('invite', normalizedCode);
         }
@@ -2812,6 +2913,8 @@
     }
 
     function applyDailyQuoteTint(count) {
+        // Skip tint on mobile — CSS handles styling
+        if (window.innerWidth <= 640) return;
         const content = document.querySelector('#daily-inspiration .daily-inspiration-content');
         if (!content) {
             return;
@@ -3012,8 +3115,20 @@
                     source: normalized.source,
                     reflection: normalized.reflection,
                     savedOn: normalized.displayDate || null,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: FieldValue.serverTimestamp()
                 };
+
+                // Delete first to avoid update-denied (rules allow create, not update)
+                await Promise.all(
+                    userChavrutas.map((room) =>
+                        db.collection('chavrutas')
+                            .doc(room.id)
+                            .collection('dailyQuoteBookmarks')
+                            .doc(bookmarkDocId)
+                            .delete()
+                            .catch(() => null)
+                    )
+                );
 
                 await Promise.all(
                     userChavrutas.map((room) =>
@@ -3021,7 +3136,8 @@
                             .doc(room.id)
                             .collection('dailyQuoteBookmarks')
                             .doc(bookmarkDocId)
-                            .set(bookmarkPayload, { merge: true })
+                            .set(bookmarkPayload)
+                            .catch(() => null)
                     )
                 );
             }
@@ -3045,7 +3161,7 @@
         btn.disabled=true; btn.textContent='Creating…'; eEl.classList.add('hidden'); sEl.classList.add('hidden');
         try {
             const code=generateCode();
-            const docData = {name,leader:currentUser.uid,createdBy:currentUser.uid,members:[currentUser.uid],maxMembers:max,inviteCode:code,requireApproval:requireApproval,pendingMembers:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+            const docData = {name,leader:currentUser.uid,createdBy:currentUser.uid,members:[currentUser.uid],maxMembers:max,inviteCode:code,requireApproval:requireApproval,pendingMembers:[],createdAt:FieldValue.serverTimestamp()};
             await db.collection('chavrutas').add(docData);
             document.getElementById('created-invite-code').textContent = code;
             document.getElementById('created-invite-link').value = inviteLink(code);
@@ -3106,10 +3222,10 @@
 
         if (data.requireApproval) {
             // Add to pending list instead of members
-            await db.collection('chavrutas').doc(doc.id).update({pendingMembers:firebase.firestore.FieldValue.arrayUnion(currentUser.uid)});
+            await db.collection('chavrutas').doc(doc.id).update({pendingMembers:FieldValue.arrayUnion(currentUser.uid)});
             return 'pending';
         }
-        await db.collection('chavrutas').doc(doc.id).update({members:firebase.firestore.FieldValue.arrayUnion(currentUser.uid)});
+        await db.collection('chavrutas').doc(doc.id).update({members:FieldValue.arrayUnion(currentUser.uid)});
         return 'joined';
     }
 
@@ -3123,11 +3239,11 @@
             if((d.pendingMembers||[]).includes(currentUser.uid)){showBanner('Your request to join "'+d.name+'" is pending approval.','info');return;}
             if((d.members||[]).length>=(d.maxMembers||8)){showBanner('"'+d.name+'" is full.','warning');return;}
             if (d.requireApproval) {
-                await db.collection('chavrutas').doc(id).update({pendingMembers:firebase.firestore.FieldValue.arrayUnion(currentUser.uid)});
+                await db.collection('chavrutas').doc(id).update({pendingMembers:FieldValue.arrayUnion(currentUser.uid)});
                 showBanner('Request sent! The leader of "'+d.name+'" will review your request.','info');
                 return;
             }
-            await db.collection('chavrutas').doc(id).update({members:firebase.firestore.FieldValue.arrayUnion(currentUser.uid)});
+            await db.collection('chavrutas').doc(id).update({members:FieldValue.arrayUnion(currentUser.uid)});
             showBanner('Joined "'+d.name+'" successfully!','success');
         } catch { showBanner('Could not auto-join.','error'); }
     }
@@ -3140,8 +3256,8 @@
             const rem=(d.members||[]).filter(u=>u!==currentUser.uid);
             if(d.leader===currentUser.uid){
                 if(rem.length===0) await db.collection('chavrutas').doc(id).delete();
-                else await db.collection('chavrutas').doc(id).update({members:firebase.firestore.FieldValue.arrayRemove(currentUser.uid),leader:rem[0]});
-            } else { await db.collection('chavrutas').doc(id).update({members:firebase.firestore.FieldValue.arrayRemove(currentUser.uid)}); }
+                else await db.collection('chavrutas').doc(id).update({members:FieldValue.arrayRemove(currentUser.uid),leader:rem[0]});
+            } else { await db.collection('chavrutas').doc(id).update({members:FieldValue.arrayRemove(currentUser.uid)}); }
         } catch { alert('Failed to leave.'); }
     }
     async function deleteChavruta(id,name){
@@ -3151,7 +3267,7 @@
     async function removeMember(id,uid){
         const n=nameCache[uid]||'this member';
         if(!await showConfirm('Remove Member','Remove '+n+' from this group?')) return;
-        try{ await db.collection('chavrutas').doc(id).update({members:firebase.firestore.FieldValue.arrayRemove(uid)}); } catch { alert('Failed to remove.'); }
+        try{ await db.collection('chavrutas').doc(id).update({members:FieldValue.arrayRemove(uid)}); } catch { alert('Failed to remove.'); }
     }
 
     /* ════ PROMOTE / DEMOTE CO-LEADER ════ */
@@ -3160,7 +3276,7 @@
         if (!await showConfirm('Promote to Co-Leader', 'Make ' + n + ' a co-leader? They will be able to manage members.')) return;
         try {
             await db.collection('chavrutas').doc(id).update({
-                coLeaders: firebase.firestore.FieldValue.arrayUnion(uid)
+                coLeaders: FieldValue.arrayUnion(uid)
             });
         } catch { alert('Failed to promote.'); }
     }
@@ -3169,7 +3285,7 @@
         if (!await showConfirm('Remove Co-Leader', 'Remove co-leader status from ' + n + '?')) return;
         try {
             await db.collection('chavrutas').doc(id).update({
-                coLeaders: firebase.firestore.FieldValue.arrayRemove(uid)
+                coLeaders: FieldValue.arrayRemove(uid)
             });
         } catch { alert('Failed to demote.'); }
     }
@@ -3179,8 +3295,8 @@
         const n = nameCache[uid] || 'this person';
         try {
             await db.collection('chavrutas').doc(id).update({
-                members: firebase.firestore.FieldValue.arrayUnion(uid),
-                pendingMembers: firebase.firestore.FieldValue.arrayRemove(uid)
+                members: FieldValue.arrayUnion(uid),
+                pendingMembers: FieldValue.arrayRemove(uid)
             });
             showBanner(n + ' has been added to the group!', 'success');
         } catch { alert('Failed to approve member.'); }
@@ -3190,7 +3306,7 @@
         if (!await showConfirm('Reject Request', 'Reject ' + n + "'s request to join?")) return;
         try {
             await db.collection('chavrutas').doc(id).update({
-                pendingMembers: firebase.firestore.FieldValue.arrayRemove(uid)
+                pendingMembers: FieldValue.arrayRemove(uid)
             });
         } catch { alert('Failed to reject member.'); }
     }
@@ -3728,7 +3844,7 @@
                     text: text,
                     userId: currentUser.uid,
                     username: name,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: FieldValue.serverTimestamp()
                 });
             setTimeout(() => { chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight; }, 100);
         } catch (err) {
@@ -3806,7 +3922,7 @@
             await db.collection('chavrutas').doc(activeChatRoomId)
                 .collection('chatMessages').doc(msgId).update({
                     text: newText,
-                    editedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    editedAt: FieldValue.serverTimestamp()
                 });
             chatEditingMsgId = null;
         } catch (err) {
@@ -3862,7 +3978,7 @@
         if (!activeChatRoomId || !currentUser) return;
         db.collection('chavrutas').doc(activeChatRoomId)
             .collection('chatReadReceipts').doc(currentUser.uid).set({
-                lastReadAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastReadAt: FieldValue.serverTimestamp(),
                 displayName: nameCache[currentUser.uid] || currentUser.displayName || 'User'
             }, { merge: true }).catch(err => console.error('Read receipt update error:', err));
     }
