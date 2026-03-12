@@ -523,7 +523,7 @@
                 nlNotSubscribed.classList.remove('hidden');
             }
         } catch (e) {
-            // Read denied means not subscribed (rule only allows read if email matches)
+            console.error('Newsletter status check failed:', e);
             nlLoading.classList.add('hidden');
             document.getElementById('nl-user-email').textContent = currentUser.email;
             nlNotSubscribed.classList.remove('hidden');
@@ -602,5 +602,6 @@
     function hideMsg(el) { el.classList.add('hidden'); }
 </script>
     <script src="/js/sidebar-nav.js"></script>
+    <script type="module" src="/js/page-auth.js"></script>
 </body>
 </html>

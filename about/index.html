@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - A Letter in the Scroll</title>
+    <meta name="description" content="Every Jewish soul is a letter in the Torah. Discover the story and mission behind A Letter in the Scroll — Torah study with depth, warmth, and real community.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="A Letter in the Scroll">
+    <meta property="og:title" content="About — A Letter in the Scroll">
+    <meta property="og:description" content="Every Jewish soul is a letter in the Torah. Discover the story and mission behind A Letter in the Scroll.">
+    <meta property="og:image" content="https://www.aletterinthescroll.com/media/images/welcome.jpg">
+    <meta property="og:image:secure_url" content="https://www.aletterinthescroll.com/media/images/welcome.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="A Letter in the Scroll — Every Jewish soul is a letter in the Torah">
+    <meta property="og:url" content="https://www.aletterinthescroll.com/about">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About — A Letter in the Scroll">
+    <meta name="twitter:description" content="Every Jewish soul is a letter in the Torah. Discover the story behind A Letter in the Scroll.">
+    <meta name="twitter:image" content="https://www.aletterinthescroll.com/media/images/welcome.jpg">
     <link rel="icon" type="image/png" href="/media/images/Icon.png">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/shabbat.css">
@@ -441,14 +456,45 @@
         }
 
         .closing-tagline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(1.18rem, 2.5vw, 1.5rem);
-            font-style: italic;
-            line-height: 1.65;
-            color: #ffe6ac;
-            margin: 1rem auto 0;
-            max-width: 40ch;
+            margin: 2.2rem auto 1.6rem;
+            max-width: 44ch;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chazak-ornament {
+            display: block;
+            width: 56px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.7), transparent);
+            margin-bottom: 0.9rem;
+        }
+        .chazak-main {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+            font-style: italic;
+            font-weight: 700;
+            color: #ffe6ac;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+            margin-bottom: 0.55rem;
+        }
+        .chazak-divider {
+            display: block;
+            font-size: 0.68rem;
+            color: rgba(255,224,133,0.45);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.12em;
+        }
+        .chazak-translation {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 2.2vw, 1.2rem);
+            font-style: italic;
+            color: rgba(255,226,162,0.82);
+            line-height: 1.55;
         }
 
         .study-cta {
@@ -688,7 +734,12 @@
                 <h2>Take Your Place in the Scroll</h2>
                 <p>You are the heir to a hundred generations of ancestors who remained faithful to their covenant, their teachings, and their hope. You are a member of an eternal people.</p>
                 <p>Take this heritage, cherish it, and learn to love it. Join our community today, discover the warmth of shared Torah, and take your rightful place as a vital, irreplaceable letter in the scroll.</p>
-                <p class="closing-tagline"><em>Chazak, chazak, v'nitchazek</em> &mdash; Be strong, be strong, and let us strengthen one another.</p>
+                <div class="closing-tagline">
+                    <span class="chazak-ornament" aria-hidden="true"></span>
+                    <em class="chazak-main">Chazak, chazak, v'nitchazek</em>
+                    <span class="chazak-divider" aria-hidden="true">— ✦ —</span>
+                    <span class="chazak-translation">Be strong, be strong, and let us strengthen one another.</span>
+                </div>
                 <a class="study-cta" href="/">
                     Get Started
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
