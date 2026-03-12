@@ -650,6 +650,18 @@
 
         let authFlowInProgress = false;
 
+        // ── Prevent auto-login after sign-out (bfcache / sessionStorage flag) ──
+        if (sessionStorage.getItem('justSignedOut')) {
+            sessionStorage.removeItem('justSignedOut');
+            auth.signOut(); // ensure Firebase state is fully cleared
+        }
+        // If bfcache restores this page while a user is still in memory, sign them out
+        window.addEventListener('pageshow', function(evt) {
+            if (evt.persisted && auth.currentUser) {
+                auth.signOut();
+            }
+        });
+
         // ── Handle redirect result (for mobile Google sign-in) ──
         auth.getRedirectResult().then(async function(result) {
             if (result && result.user) {
@@ -879,6 +891,15 @@
             }
 
             try { localStorage.setItem('hasSignedIn', '1'); } catch(e) {}
+
+            // Sync newsletter subscription status from Firestore → localStorage
+            // so the newsletter box stays hidden on future visits
+            try {
+                var nlDocId = user.email.toLowerCase().replace(/[.#$/\[\]]/g, '_');
+                db.collection('newsletterSubscribers').doc(nlDocId).get().then(function(doc) {
+                    if (doc.exists) localStorage.setItem('nlSubscribed', '1');
+                }).catch(function() {});
+            } catch(e) {}
 
             syncUserProfile(user).finally(function() {
                 const inviteCode = resolveInviteCode();

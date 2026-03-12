@@ -332,8 +332,19 @@ function showLoginRequiredOverlayAndRedirect() {
 }
 
 function initAuth(onAuthReady) {
+  let authRedirectTimer = null;
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
+      // Cancel any pending redirect from an earlier null state.
+      if (authRedirectTimer) { clearTimeout(authRedirectTimer); authRedirectTimer = null; }
+
+      // Remove login overlay if it was shown prematurely.
+      window.__loginRedirectPending = false;
+      const overlay = document.getElementById('login-required-overlay');
+      if (overlay) overlay.remove();
+      document.body?.classList.remove('login-required-pending');
+
       currentUser = user;
       console.log('User authenticated:', user.email);
       if (onAuthReady) onAuthReady(user);
@@ -346,7 +357,15 @@ function initAuth(onAuthReady) {
       const publicPaths = ['', '/', '/invite', '/join', '/about'];
       const isPublic = publicPaths.includes(path);
       if (!isPublic) {
-        showLoginRequiredOverlayAndRedirect();
+        // Firebase fires null initially while loading persisted session.
+        // Delay the redirect so the real auth state can cancel it.
+        if (!authRedirectTimer) {
+          authRedirectTimer = setTimeout(() => {
+            if (!currentUser) {
+              showLoginRequiredOverlayAndRedirect();
+            }
+          }, 2000);
+        }
         return;
       }
       if (onAuthReady) onAuthReady(null);

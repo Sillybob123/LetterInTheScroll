@@ -1974,7 +1974,7 @@
 <body class="dashboard-body min-h-screen">
 
 <!-- ═══ HEADER ═══ -->
-<div id="shared-header-mount"></div>
+<div id="shared-header-mount" style="background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%);min-height:64px"></div>
     <script src="/js/shared-header.js"></script>
 
 <!-- ═══ MAIN ═══ -->
@@ -2374,6 +2374,14 @@
         revealDashboardShell();
     }
 
+    // Restore dashboard when page is loaded from bfcache (back/forward nav).
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            dashboardShellRevealed = false;
+            revealDashboardShell();
+        }
+    });
+
     /* ════ HEADER DROPDOWN (matches page-auth.js) ════ */
     function buildDashboardHeaderDropdown(firstName, email) {
         const headerActions = document.getElementById('header-actions');
@@ -2521,17 +2529,26 @@
     }
 
     /* ════ AUTH ════ */
+    let authRedirectTimer = null;
     auth.onAuthStateChanged(async user => {
         if (!user) {
-            const params = new URLSearchParams(window.location.search);
-            const inviteCode = sanitizeInviteCode(params.get('invite') || '');
-            if (inviteCode.length === INVITE_CODE_LENGTH) {
-                window.location.href = '/join?invite=' + encodeURIComponent(inviteCode);
-            } else {
-                window.location.href = '/';
+            // Firebase fires null initially while loading session from IndexedDB.
+            // Delay redirect so the real auth state can arrive and cancel it.
+            if (!authRedirectTimer) {
+                authRedirectTimer = setTimeout(() => {
+                    if (currentUser) return;
+                    const params = new URLSearchParams(window.location.search);
+                    const inviteCode = sanitizeInviteCode(params.get('invite') || '');
+                    if (inviteCode.length === INVITE_CODE_LENGTH) {
+                        window.location.href = '/join?invite=' + encodeURIComponent(inviteCode);
+                    } else {
+                        window.location.href = '/';
+                    }
+                }, 2000);
             }
             return;
         }
+        if (authRedirectTimer) { clearTimeout(authRedirectTimer); authRedirectTimer = null; }
         currentUser = user;
         revealDashboardShell();
 
@@ -2587,7 +2604,7 @@
         refreshDailyQuoteBookmarkState();
     });
 
-    function signOutUser() { sessionStorage.removeItem('headerUserCache'); auth.signOut().then(() => window.location.href = '/'); }
+    function signOutUser() { sessionStorage.removeItem('headerUserCache'); sessionStorage.setItem('justSignedOut', '1'); auth.signOut().then(() => window.location.href = '/'); }
 
     /* ════ PANEL TABS ════ */
     function showPanel(tab) {

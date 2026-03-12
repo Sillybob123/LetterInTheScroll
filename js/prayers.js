@@ -592,8 +592,11 @@ function initializePrayersPage() {
   setupNavigationHub();
 
   if (window.location.hash) {
-    const target = document.querySelector(window.location.hash);
-    if (target) expandPrayerSection(target);
+    const hashId = window.location.hash.replace(/^#/, '');
+    if (/^[a-zA-Z0-9_-]+$/.test(hashId)) {
+      const target = document.getElementById(hashId);
+      if (target) expandPrayerSection(target);
+    }
   }
 
   // Light usability: focus search on first load if present
