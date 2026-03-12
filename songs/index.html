@@ -16,103 +16,88 @@
     <link rel="stylesheet" href="/css/shabbat.css">
     <link rel="stylesheet" href="/css/mobile-overrides.css">
     <link rel="stylesheet" href="/css/songs-style.css">
-    <link rel="stylesheet" href="/css/tailwind-utilities.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen" data-header-fallback="true">
+<body class="songs-body" data-header-fallback="true">
 
     <!-- Header -->
-<div id="shared-header-mount" style="background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%);min-height:64px"></div>
+    <div id="shared-header-mount" style="background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%);min-height:64px"></div>
     <script src="/js/shared-header.js"></script>
 
-
-
-    <!-- Page Title Bar -->
-    <div style="background:#1a3264;border-bottom:2px solid rgba(212,175,55,0.25);padding:9px 0;">
-        <div style="max-width:1200px;margin:0 auto;padding:0 1rem;">
-            <p style="margin:0;font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#d4af37;">Songs &amp; Poems</p>
+    <!-- Hero -->
+    <section class="songs-hero">
+        <div class="songs-hero-inner">
+            <p class="songs-hero-eyebrow">Songs &amp; Poems</p>
+            <h1 class="songs-hero-title">Listen, reflect, read, and sing</h1>
+            <p class="songs-hero-desc">Explore songs and poems that celebrate faith, hope, and the journey of the soul.</p>
         </div>
-    </div>
+        <div class="songs-hero-stat">
+            <span class="songs-hero-stat-num" id="songs-count">...</span>
+            <span class="songs-hero-stat-label">entries</span>
+        </div>
+    </section>
 
-    <main class="container mx-auto px-4 py-8">
-        <section class="songs-hero">
-            <div>
-                <p class="songs-eyebrow">Songs and Poems</p>
-                <h2 class="text-2xl md:text-3xl font-bold text-blue-900 mb-4" style="line-height:1.2;">Listen, reflect, read, and sing</h2>
-                <p class="songs-subtitle">
-                    Explore songs and poems that celebrate faith, hope, and the journey of the soul. Songs include
-                    YouTube players with full lyrics, and poems are presented in a crafted reading experience.
-                </p>
-            </div>
-            <div class="songs-hero-card">
-                <p class="songs-hero-label">Songs &amp; Poems Library</p>
-                <p class="songs-hero-count" id="songs-count" aria-live="polite">Loading entries...</p>
-            </div>
-        </section>
-
-        <section class="songs-toolbar" aria-label="Songs and poems search">
+    <main class="songs-main">
+        <!-- Toolbar -->
+        <div class="songs-toolbar" aria-label="Songs and poems search">
             <div class="songs-type-tabs" role="tablist" aria-label="Entry type filter">
-                <button type="button" role="tab" class="songs-type-tab active" data-type-filter="all" aria-selected="true">All <span id="songs-tab-count-all" class="songs-type-tab-count">0</span></button>
-                <button type="button" role="tab" class="songs-type-tab" data-type-filter="song" aria-selected="false">Songs <span id="songs-tab-count-song" class="songs-type-tab-count">0</span></button>
-                <button type="button" role="tab" class="songs-type-tab" data-type-filter="poem" aria-selected="false">Poems <span id="songs-tab-count-poem" class="songs-type-tab-count">0</span></button>
+                <button type="button" role="tab" class="songs-type-tab active" data-type-filter="all" aria-selected="true">All <span id="songs-tab-count-all" class="songs-tab-badge">0</span></button>
+                <button type="button" role="tab" class="songs-type-tab" data-type-filter="song" aria-selected="false">Songs <span id="songs-tab-count-song" class="songs-tab-badge">0</span></button>
+                <button type="button" role="tab" class="songs-type-tab" data-type-filter="poem" aria-selected="false">Poems <span id="songs-tab-count-poem" class="songs-tab-badge">0</span></button>
             </div>
-            <div class="songs-search">
-                <label for="song-search" class="songs-search-label">Search songs and poems</label>
-                <div class="songs-search-field">
-                    <input id="song-search" type="search" placeholder="Search by title, artist, poet, lyric, or poem line..." autocomplete="off" class="songs-search-input">
-                    <button type="button" id="clear-song-search" class="songs-search-clear">Clear</button>
-                </div>
-                <p class="songs-search-hint">Tip: try a Hebrew word, an artist name, a poet, or a phrase from a poem.</p>
+            <div class="songs-search-wrap">
+                <svg class="songs-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke-width="2"/><line x1="16.65" y1="16.65" x2="21" y2="21" stroke-width="2"/></svg>
+                <input id="song-search" type="search" placeholder="Search titles, artists, poets..." autocomplete="off" class="songs-search-input">
+                <button type="button" id="clear-song-search" class="songs-search-clear" aria-label="Clear search">Clear</button>
             </div>
-            <div class="songs-pill" id="songs-filter-pill">All entries</div>
-        </section>
+        </div>
 
+        <!-- Filter pill -->
+        <div class="songs-filter-row">
+            <span class="songs-pill" id="songs-filter-pill">All entries</span>
+        </div>
+
+        <!-- Song Cards Grid -->
         <section id="songs-container" class="songs-grid" aria-live="polite">
             <div class="songs-loading">Loading entries...</div>
         </section>
 
+        <!-- Past Dvar Torahs -->
         <section class="past-dvar-section" aria-labelledby="past-dvar-title">
             <div class="past-dvar-header">
-                <div class="past-dvar-header-text">
+                <div>
                     <h3 id="past-dvar-title" class="past-dvar-title">Past Weekly Dvar Torahs</h3>
-                    <p class="past-dvar-description">
-                        Click each parsha to expand and view every dvar Torah and response written for that week.
-                    </p>
+                    <p class="past-dvar-desc">Click each parsha to expand and view every dvar Torah written for that week.</p>
                 </div>
-                <span id="past-dvar-count" class="past-dvar-count">Loading…</span>
+                <span id="past-dvar-count" class="past-dvar-badge">Loading...</span>
             </div>
             <div id="past-dvar-list" class="past-dvar-list" aria-live="polite">
                 <div class="past-dvar-loading">Loading past weekly dvar Torahs...</div>
             </div>
         </section>
-        <!-- Apple Music Playlist Section -->
+
+        <!-- Apple Music -->
         <section class="apple-music-section">
-            <div class="apple-music-header">
-                <svg class="apple-music-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.997 6.124c0-.738-.065-1.47-.24-2.19-.317-1.31-1.062-2.31-2.18-3.043a5.14 5.14 0 00-1.877-.726 10.7 10.7 0 00-1.851-.174c-1.98-.03-3.965-.03-5.945-.03-1.98 0-3.965 0-5.945.03-.618.004-1.235.058-1.85.174-.665.13-1.281.374-1.877.726-1.118.733-1.863 1.734-2.18 3.043-.175.72-.24 1.452-.24 2.19-.03 2.096-.03 4.192-.03 6.288 0 2.096 0 4.192.03 6.288 0 .738.065 1.47.24 2.19.317 1.31 1.062 2.31 2.18 3.043.596.352 1.212.596 1.877.726.615.116 1.232.17 1.85.174 1.98.03 3.965.03 5.945.03 1.98 0 3.965 0 5.945-.03.618-.004 1.235-.058 1.851-.174a5.14 5.14 0 001.877-.726c1.118-.733 1.863-1.734 2.18-3.043.175-.72.24-1.452.24-2.19.03-2.096.03-4.192.03-6.288 0-2.096 0-4.192-.03-6.288zM8.304 15.896V8.104L16.738 12l-8.434 3.896z"/>
-                </svg>
-                <div class="apple-music-text">
+            <div class="apple-music-row">
+                <div class="apple-music-info">
                     <h3 class="apple-music-title">מודה אני Playlist</h3>
-                    <p class="apple-music-description">
-                        I've put together a playlist of songs that help me start the day with gratitude. Feel free to listen if you're interested.
-                    </p>
+                    <p class="apple-music-desc">A playlist of songs that help start the day with gratitude.</p>
                 </div>
-                <a href="https://music.apple.com/us/playlist/%D7%9E%D7%95%D7%93%D7%94-%D7%90%D7%A0%D7%99/pl.u-WabZzV3sWGPPN4" target="_blank" rel="noopener" class="apple-music-link">
-                    Listen on Apple Music →
+                <a href="https://music.apple.com/us/playlist/%D7%9E%D7%95%D7%93%D7%94-%D7%90%D7%A0%D7%99/pl.u-WabZzV3sWGPPN4" target="_blank" rel="noopener" class="apple-music-btn">
+                    Listen on Apple Music &rarr;
                 </a>
             </div>
             <div class="apple-music-embed" id="apple-music-embed">
-                <div class="apple-music-placeholder" id="apple-music-placeholder" style="height:450px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border-radius:12px;cursor:pointer;" role="button" tabindex="0" aria-label="Load Apple Music playlist">
-                    <span style="color:#1d4ed8;font-weight:600;font-size:1rem;">Click to load playlist</span>
+                <div class="apple-music-placeholder" id="apple-music-placeholder" role="button" tabindex="0" aria-label="Load Apple Music playlist">
+                    <span>Click to load playlist</span>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-blue-900 text-white py-6 mt-12 border-t-4 border-blue-700">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-sm">May these songs and poems deepen your faith</p>
-            <p class="text-xs text-blue-300 mt-2">A Letter in the Scroll</p>
-        </div>
+    <footer class="songs-footer">
+        <p>May these songs and poems deepen your faith</p>
+        <p class="songs-footer-sub">A Letter in the Scroll</p>
     </footer>
 
     <script src="/js/shabbat.js"></script>

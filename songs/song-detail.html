@@ -33,31 +33,6 @@
     <div id="shared-header-mount" style="background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%);min-height:64px"></div>
     <script src="/js/shared-header.js"></script>
 
-    <!-- Community Status Bar -->
-    <div id="community-status-bar" class="hidden bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200">
-        <div class="container mx-auto">
-            <div id="community-status-content" class="flex flex-wrap items-center gap-4 text-sm text-gray-700">
-                <div id="header-online-section" class="status-section hidden flex items-center gap-1.5">
-                    <div class="flex items-center gap-1">
-                        <div class="status-leading-dot bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-xs font-medium text-gray-700">Online:</span>
-                    </div>
-                    <span id="header-online-concurrency" class="status-concurrency hidden"></span>
-                    <div id="header-online-users-list" class="status-scroll flex flex-nowrap items-center gap-1.5 overflow-x-auto"></div>
-                </div>
-                <div id="header-your-status" class="status-section hidden flex items-center gap-1 ml-auto">
-                    <span id="header-your-username" class="text-xs font-medium text-gray-800"></span>
-                    <span class="text-xs text-gray-400">&bull;</span>
-                    <span id="header-your-login-time" class="text-xs text-gray-600">just now</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Instant presence restore -->
-    <script>
-    (function(){try{var c=JSON.parse(sessionStorage.getItem('presenceCache'));if(!c||!c.html||Date.now()-c.ts>1800000)return;var l=document.getElementById('header-online-users-list');var s=document.getElementById('header-online-section');var b=document.getElementById('community-status-bar');if(l&&s&&b){l.innerHTML=c.html;s.classList.remove('hidden');b.classList.remove('hidden')}}catch(e){}})();
-    </script>
-
     <!-- Back to Songs and Poems Button -->
     <div class="container mx-auto px-4 py-4">
         <a href="/songs/" class="back-to-songs-link">
@@ -150,7 +125,5 @@
     <script src="/js/header-fallback.js"></script>
     <script src="/js/sidebar-nav.js"></script>
     <script src="/js/text-size-control.js"></script>
-    <!-- Shared presence tracking for online status across all pages -->
-    <script type="module" src="/js/presence.js"></script>
 </body>
 </html>

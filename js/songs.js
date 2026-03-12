@@ -164,24 +164,18 @@ function updateCounts(filteredCount, totalCount, query, typeFilter) {
   const typeLabel = getTypeLabel(typeFilter);
 
   if (countLabel) {
-    if (totalCount === 0) {
-      countLabel.textContent = "No entries yet";
-    } else if (query || typeFilter !== "all") {
-      countLabel.textContent = `Showing ${filteredCount} of ${totalCount} entries`;
-    } else {
-      countLabel.textContent = `Showing ${totalCount} ${totalCount === 1 ? "entry" : "entries"}`;
-    }
+    countLabel.textContent = String(totalCount || 0);
   }
 
   if (filterPill) {
     if (!query && typeFilter === "all") {
       filterPill.textContent = "All entries";
     } else if (query && typeFilter !== "all") {
-      filterPill.textContent = `${typeLabel} • Matches: ${filteredCount}`;
+      filterPill.textContent = `${typeLabel} \u2022 ${filteredCount} of ${totalCount}`;
     } else if (query) {
-      filterPill.textContent = `Matches: ${filteredCount}`;
+      filterPill.textContent = `${filteredCount} of ${totalCount} matches`;
     } else {
-      filterPill.textContent = typeLabel;
+      filterPill.textContent = `${typeLabel} \u2022 ${filteredCount}`;
     }
   }
 }
