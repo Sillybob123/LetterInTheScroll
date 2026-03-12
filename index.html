@@ -897,7 +897,11 @@
             try {
                 var nlDocId = user.email.toLowerCase().replace(/[.#$/\[\]]/g, '_');
                 db.collection('newsletterSubscribers').doc(nlDocId).get().then(function(doc) {
-                    if (doc.exists) localStorage.setItem('nlSubscribed', '1');
+                    if (doc.exists) {
+                        localStorage.setItem('nlSubscribed', '1');
+                        var sec = document.getElementById('nl-section');
+                        if (sec) sec.style.display = 'none';
+                    }
                 }).catch(function() {});
             } catch(e) {}
 

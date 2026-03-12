@@ -2345,6 +2345,7 @@
     /* ── State ── */
     let currentUser = null, confirmResolve = null;
     const nameCache = {};
+    const memberActivityCache = {};
     let chavUnsubs  = [];
     let userChavrutas = [];
     let latestDailyQuote = null;
@@ -2647,9 +2648,60 @@
         return url.toString();
     }
 
+    /* ════ LOCAL CACHE FOR INSTANT LOAD ════ */
+    const CACHE_KEY = 'dashGroupsCache';
+    const CACHE_TTL = 300000; // 5 minutes
+
+    function saveGroupsCache(list) {
+        try {
+            // Serialize chavruta list + names + activity for instant restore
+            const serializable = list.map(c => {
+                const obj = { id:c.id, name:c.name, leader:c.leader, members:c.members||[], pendingMembers:c.pendingMembers||[], maxMembers:c.maxMembers, inviteCode:c.inviteCode, requireApproval:!!c.requireApproval, coLeaders:c.coLeaders||[], createdBy:c.createdBy };
+                return obj;
+            });
+            // Serialize activity — convert Firestore timestamps to plain ms
+            const actCache = {};
+            for (const uid in memberActivityCache) {
+                const a = memberActivityCache[uid];
+                actCache[uid] = { lastSeen: tsToMs(a.lastSeen)||0, lastLogin: tsToMs(a.lastLogin)||0 };
+            }
+            localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), uid: currentUser.uid, groups: serializable, names: Object.assign({}, nameCache), activity: actCache }));
+        } catch(e) { /* quota exceeded or private mode — ignore */ }
+    }
+
+    function loadGroupsCache() {
+        try {
+            const raw = localStorage.getItem(CACHE_KEY);
+            if (!raw) return null;
+            const c = JSON.parse(raw);
+            if (!c || c.uid !== currentUser.uid || (Date.now()-c.ts) > CACHE_TTL) { localStorage.removeItem(CACHE_KEY); return null; }
+            return c;
+        } catch(e) { return null; }
+    }
+
+    function restoreFromCache() {
+        const cached = loadGroupsCache();
+        if (!cached || !cached.groups.length) return false;
+        // Hydrate nameCache and activityCache from stored data
+        if (cached.names) Object.assign(nameCache, cached.names);
+        if (cached.activity) {
+            for (const uid in cached.activity) {
+                if (!memberActivityCache[uid]) memberActivityCache[uid] = cached.activity[uid];
+            }
+        }
+        // Render immediately from cache
+        renderChavrutasSync(cached.groups);
+        return true;
+    }
+
     /* ════ LOAD CHAVRUTAS ════ */
     function loadChavrutas() {
         chavUnsubs.forEach(u=>u()); chavUnsubs=[];
+
+        // Instantly show cached data while Firestore loads
+        const restoredFromCache = restoreFromCache();
+        if (restoredFromCache) revealDashboardShell();
+
         const unsub = db.collection('chavrutas')
             .where('members','array-contains',currentUser.uid)
             .onSnapshot(async snap => {
@@ -2658,12 +2710,26 @@
                 await renderChavrutas(list);
             }, err => {
                 revealDashboardShell();
-                renderChavrutas([]);
+                if (!restoredFromCache) renderChavrutas([]);
             });
         chavUnsubs.push(unsub);
     }
 
-    /* ════ RENDER ════ */
+    /* ════ RENDER (sync — from cache, no fetches) ════ */
+    function renderChavrutasSync(list) {
+        userChavrutas = Array.isArray(list) ? list.slice() : [];
+        const grid    = document.getElementById('chavrutas-grid');
+        const empty   = document.getElementById('empty-state');
+        const countEl = document.getElementById('chavruta-count');
+        countEl.textContent = list.length + (list.length===1?' group':' groups');
+        if (list.length===0) { grid.innerHTML=''; empty.classList.remove('hidden'); configureHeroStudyButton(); refreshDailyQuoteBookmarkState(); return; }
+        empty.classList.add('hidden');
+        configureHeroStudyButton();
+        refreshDailyQuoteBookmarkState();
+        grid.innerHTML = list.map(cardHTML).join('');
+    }
+
+    /* ════ RENDER (async — from Firestore with fresh data) ════ */
     async function renderChavrutas(list) {
         userChavrutas = Array.isArray(list) ? list.slice() : [];
         const grid    = document.getElementById('chavrutas-grid');
@@ -2676,17 +2742,28 @@
             empty.classList.remove('hidden');
             configureHeroStudyButton();
             refreshDailyQuoteBookmarkState();
+            saveGroupsCache([]);
             return;
         }
         empty.classList.add('hidden');
 
         const uids = new Set(); list.forEach(c=>{ (c.members||[]).forEach(u=>uids.add(u)); (c.pendingMembers||[]).forEach(u=>uids.add(u)); });
-        await fetchNames([...uids]);
+        const uncachedUids = [...uids].filter(u => !nameCache[u]);
 
         configureHeroStudyButton();
         refreshDailyQuoteBookmarkState();
 
+        // Render immediately with whatever names are already cached
         grid.innerHTML = list.map(cardHTML).join('');
+
+        // If there are uncached names, fetch them in background and re-render cards
+        if (uncachedUids.length > 0) {
+            await fetchNames(uncachedUids);
+            grid.innerHTML = list.map(cardHTML).join('');
+        }
+
+        // Save to cache for next page load
+        saveGroupsCache(list);
     }
 
     function configureHeroStudyButton() {
@@ -2892,6 +2969,47 @@
                 Leave Group
             </button>`;
 
+        // Build the expandable members view with activity status
+        const membersWithActivity = mems.slice().sort((a,b) => {
+            const actA = memberActivityCache[a], actB = memberActivityCache[b];
+            if (isTrulyOnline(actA) && !isTrulyOnline(actB)) return -1;
+            if (!isTrulyOnline(actA) && isTrulyOnline(actB)) return 1;
+            return activityTimestampMs(actB) - activityTimestampMs(actA);
+        });
+
+        const membersViewRows = membersWithActivity.map(uid => {
+            const n = formatDisplayName(nameCache[uid] || uid.slice(0,8));
+            const act = memberActivityCache[uid];
+            const me = uid === currentUser.uid;
+            const isLdr = uid === c.leader;
+            const isCoLdr = coLeaders.includes(uid);
+            const dotCol = activityDotColor(act);
+            const online = isTrulyOnline(act);
+            const dotPulse = online ? 'animation:pulse 2s infinite;' : '';
+            const actText = formatActivityTime(act);
+            const actColor = online ? '#16a34a' : '#9ca3af';
+            const color = isLdr ? 'linear-gradient(135deg,#c89a35,#9d7418)' : isCoLdr ? 'linear-gradient(135deg,#7c3aed,#a78bfa)' : getMemberColor(uid, mems);
+
+            let badges = '';
+            if (isLdr) badges += '<span style="display:inline-block;padding:1px 6px;font-size:9px;font-weight:700;color:#92400e;background:#fef3c7;border:1px solid #fde68a;border-radius:999px;margin-left:4px;">Leader</span>';
+            if (isCoLdr) badges += '<span style="display:inline-block;padding:1px 6px;font-size:9px;font-weight:700;color:#6d28d9;background:#ede9fe;border:1px solid #c4b5fd;border-radius:999px;margin-left:4px;">Co-Leader</span>';
+            if (me) badges += '<span style="display:inline-block;padding:1px 6px;font-size:9px;font-weight:600;color:#1e40af;background:#dbeafe;border:1px solid #bfdbfe;border-radius:999px;margin-left:4px;">You</span>';
+
+            return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:${me?'rgba(239,246,255,0.7)':'white'};border-radius:10px;border:1px solid rgba(0,0,0,0.05);">
+                <div style="position:relative;flex-shrink:0;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;">${n.charAt(0).toUpperCase()}</div>
+                    <div style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:${dotCol};border:2px solid white;${dotPulse}"></div>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;flex-wrap:wrap;">
+                        <span style="font-size:13px;font-weight:600;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;">${escHTML(n)}</span>
+                        ${badges}
+                    </div>
+                    <div style="font-size:11px;color:${actColor};margin-top:1px;">${actText}</div>
+                </div>
+            </div>`;
+        }).join('');
+
         return `<div class="chavruta-card fade-up">
             <div class="px-5 pt-5 pb-4" style="background:linear-gradient(135deg,#16285e 0%,#2f56ab 100%)">
                 <div class="flex items-start justify-between mb-3">
@@ -2911,6 +3029,20 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     Enter Study Room
                 </a>
+                <button id="members-btn-${c.id}" onclick="toggleMembersView('${c.id}')"
+                    class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-blue-700 hover:bg-blue-50 border border-slate-200 transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    View Members
+                    <svg class="members-chevron w-3 h-3 transition-transform" style="transition:transform .2s" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div id="members-view-${c.id}" style="display:none;">
+                    <div style="display:flex;flex-direction:column;gap:5px;padding:8px 0 4px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+                            <span style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">${count} Members</span>
+                        </div>
+                        ${membersViewRows}
+                    </div>
+                </div>
                 ${settingsContent}
             </div>
         </div>`;
@@ -2932,8 +3064,15 @@
         await Promise.all(uids.filter(u=>!nameCache[u]).map(async uid => {
             try {
                 const s = await db.collection('users').doc(uid).get();
-                nameCache[uid] = s.exists ? (s.data().displayName||s.data().firstName||s.data().email||uid.slice(0,8)) : uid.slice(0,8);
-            } catch { nameCache[uid]=uid.slice(0,8); }
+                if (s.exists) {
+                    const d = s.data();
+                    nameCache[uid] = d.displayName||d.firstName||d.email||uid.slice(0,8);
+                    memberActivityCache[uid] = { lastSeen: d.lastSeen||null, lastLogin: d.lastLogin||null, isOnline: !!d.isOnline };
+                } else {
+                    nameCache[uid] = uid.slice(0,8);
+                    memberActivityCache[uid] = { lastSeen: null, lastLogin: null, isOnline: false };
+                }
+            } catch { nameCache[uid]=uid.slice(0,8); memberActivityCache[uid]={ lastSeen:null, lastLogin:null, isOnline:false }; }
         }));
     }
 
@@ -2951,6 +3090,54 @@
             return 'A Friend';
         }
         return cleaned.split(' ').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    }
+
+    // Convert Firestore timestamps to ms
+    function tsToMs(t) { if (!t) return 0; if (typeof t.toMillis==='function') return t.toMillis(); if (typeof t.seconds==='number') return t.seconds*1000; if (typeof t==='number') return t; const d=new Date(t); return isNaN(d)?0:d.getTime(); }
+
+    function activityTimestampMs(act) {
+        if (!act) return 0;
+        return Math.max(tsToMs(act.lastSeen)||0, tsToMs(act.lastLogin)||0);
+    }
+
+    // Determine truly online: lastSeen within last 2 minutes (presence updates every 30s)
+    function isTrulyOnline(act) {
+        if (!act) return false;
+        const seenMs = tsToMs(act.lastSeen);
+        return seenMs > 0 && (Date.now() - seenMs) < 120000;
+    }
+
+    function formatActivityTime(act) {
+        if (!act) return 'No recent activity';
+        if (isTrulyOnline(act)) return 'Online now';
+        const ms = activityTimestampMs(act);
+        if (!ms) return 'No recent activity';
+        const diff = Date.now()-ms;
+        if (diff<60000) return 'Just now';
+        if (diff<3600000) { const m=Math.floor(diff/60000); return m+' min'+(m>1?'s':'')+' ago'; }
+        if (diff<86400000) { const h=Math.floor(diff/3600000); return h+' hour'+(h>1?'s':'')+' ago'; }
+        if (diff<604800000) { const d=Math.floor(diff/86400000); return d+' day'+(d>1?'s':'')+' ago'; }
+        return new Date(ms).toLocaleDateString();
+    }
+
+    function activityDotColor(act) {
+        if (!act) return '#d1d5db';
+        if (isTrulyOnline(act)) return '#22c55e';
+        const ms = activityTimestampMs(act);
+        if (ms && (Date.now()-ms)<86400000) return '#facc15';
+        return '#d1d5db';
+    }
+
+    function toggleMembersView(cardId) {
+        const el = document.getElementById('members-view-'+cardId);
+        const btn = document.getElementById('members-btn-'+cardId);
+        if (!el) return;
+        const isHidden = el.style.display === 'none';
+        el.style.display = isHidden ? 'block' : 'none';
+        if (btn) {
+            const chevron = btn.querySelector('.members-chevron');
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+        }
     }
 
     function ensureDailyQuoteCommunityLine() {
