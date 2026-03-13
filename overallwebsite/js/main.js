@@ -2520,9 +2520,12 @@ function setupLoginListeners() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             try {
+                sessionStorage.setItem('justSignedOut', '1');
+                sessionStorage.removeItem('headerUserCache');
                 await signOutUser();
                 closeCommentsPanel(stopListeningForComments);
                 hideInfoPanel();
+                window.location.href = '/';
             } catch (error) {
                 console.error('Sign-out error:', error);
             }
