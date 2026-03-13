@@ -900,8 +900,6 @@
                 db.collection('newsletterSubscribers').doc(nlDocId).get().then(function(doc) {
                     if (doc.exists) {
                         localStorage.setItem('nlSubscribed', '1');
-                        var sec = document.getElementById('nl-section');
-                        if (sec) sec.style.display = 'none';
                     }
                 }).catch(function() {});
             } catch(e) {}
@@ -1437,12 +1435,6 @@
         }
 
         /* ════ NEWSLETTER SIGNUP ════ */
-        (function() {
-            if (localStorage.getItem('nlSubscribed')) {
-                var sec = document.getElementById('nl-section');
-                if (sec) sec.style.display = 'none';
-            }
-        })();
 
         async function handleNewsletterSignup(e) {
             e.preventDefault();
