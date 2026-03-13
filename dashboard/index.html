@@ -1985,7 +1985,7 @@
 
 <!-- ═══ HEADER ═══ -->
 <div id="shared-header-mount" style="background:linear-gradient(135deg,#0c1a3e 0%,#16285e 45%,#1e3a8a 100%);min-height:64px"></div>
-    <script src="/js/shared-header.js"></script>
+    <script src="/js/header-loader.js"></script>
 
 <!-- ═══ MAIN ═══ -->
 <main class="dashboard-main">
@@ -2590,6 +2590,9 @@
 
         // Cache for instant rendering on next page load
         try { sessionStorage.setItem('headerUserCache', JSON.stringify({ firstName: firstName, email: user.email || '' })); } catch(_) {}
+
+        // Hide newsletter section if this user already subscribed (covers cross-device / cleared storage)
+        hideNewsletterIfSubscribed(user.email);
 
         // URL params
         const p = new URLSearchParams(window.location.search);
@@ -4281,6 +4284,22 @@
             if (sec) sec.style.display = 'none';
         }
     })();
+
+    // Also check Firestore so the section stays hidden even if localStorage was cleared
+    // or the user is on a different device
+    async function hideNewsletterIfSubscribed(userEmail) {
+        if (!userEmail) return;
+        if (localStorage.getItem('nlSubscribed')) return; // already hidden
+        try {
+            var docId = userEmail.replace(/[.#$/\[\]]/g, '_');
+            var snap = await db.collection('newsletterSubscribers').doc(docId).get();
+            if (snap.exists) {
+                localStorage.setItem('nlSubscribed', '1');
+                var sec = document.getElementById('dash-nl-section');
+                if (sec) sec.style.display = 'none';
+            }
+        } catch (e) { /* ignore — worst case the section stays visible */ }
+    }
 
     async function handleDashNewsletterSignup(e) {
         e.preventDefault();
