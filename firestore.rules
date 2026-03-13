@@ -60,7 +60,7 @@ service cloud.firestore {
         request.resource.data.members.size() == 1 &&
         request.resource.data.name.size() >= 2 &&
         request.resource.data.name.size() <= 50 &&
-        request.resource.data.maxMembers <= 12;
+        request.resource.data.maxMembers <= 30;
 
       // Members can update (join/leave), leader has full update
       allow update: if isAuth() &&
