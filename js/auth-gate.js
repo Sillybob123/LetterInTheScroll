@@ -52,23 +52,27 @@
             var style = document.createElement('style');
             style.id = 'login-required-overlay-style';
             style.textContent = `
-                body.login-required-pending > *:not(#login-required-overlay):not(header):not(.header-main) {
+                body.login-required-pending > *:not(#login-required-overlay):not(header):not(.header-main):not(script):not(style):not(link) {
                   filter: blur(4px);
                   pointer-events: none !important;
                   user-select: none !important;
                 }
-                body.login-required-pending header,
-                body.login-required-pending .header-main {
+                body.login-required-pending > header,
+                body.login-required-pending > .header-main {
+                  filter: none !important;
+                  pointer-events: auto !important;
+                  user-select: auto !important;
                   position: relative;
                   z-index: 10000 !important;
-                  pointer-events: auto !important;
                 }
                 #login-required-overlay {
                   position: fixed;
-                  inset: 0;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
                   z-index: 9998;
                   background: radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.22), transparent 36%), rgba(3, 10, 28, 0.62);
-                  backdrop-filter: blur(3px);
                   display: flex;
                   align-items: center;
                   justify-content: center;
