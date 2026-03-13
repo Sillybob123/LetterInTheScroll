@@ -209,6 +209,34 @@
         updateAudioToggleState(false);
     }
 
+    function createLoginShabbatBanner() {
+        const loginHeader = document.querySelector('.gradient-header');
+        if (!loginHeader || document.getElementById('shabbat-banner')) {
+            return;
+        }
+
+        const banner = document.createElement('div');
+        banner.id = 'shabbat-banner';
+        banner.className = 'shabbat-login-banner';
+        banner.setAttribute('role', 'region');
+        banner.setAttribute('aria-label', 'Shabbat greeting');
+
+        banner.innerHTML =
+            '<div class="shabbat-floating-icons" aria-hidden="true">' +
+                '<div class="shabbat-icon shabbat-icon--challah-1"><img src="/media/images/Challah.png" alt=""></div>' +
+                '<div class="shabbat-icon shabbat-icon--challah-2"><img src="/media/images/Challah.png" alt=""></div>' +
+                '<div class="shabbat-icon shabbat-icon--candle-1"><img src="/media/images/shabbatcandle.png" alt=""></div>' +
+                '<div class="shabbat-icon shabbat-icon--candle-2"><img src="/media/images/shabbatcandle.png" alt=""></div>' +
+            '</div>' +
+            '<div class="shabbat-greeting" style="font-size:clamp(1.1rem,3vw,1.4rem);margin:0;">שַׁבָּת שָׁלוֹם</div>' +
+            '<div class="shabbat-greeting-sub" style="margin-bottom:0;">' +
+                '<span class="shabbat-greeting-sub-prefix">Shabbat Shalom • </span>' +
+                '<span id="shabbat-blessing-text" class="shabbat-blessing-text">' + BLESSINGS[0] + '</span>' +
+            '</div>';
+
+        loginHeader.appendChild(banner);
+    }
+
     function createShabbatBanner() {
         if (document.getElementById('shabbat-banner')) {
             return;
@@ -221,6 +249,8 @@
 
         const headerMain = document.querySelector('.header-main');
         if (!headerMain) {
+            // Try login page layout instead
+            createLoginShabbatBanner();
             return;
         }
 

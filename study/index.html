@@ -77,6 +77,8 @@
         if(!c||Date.now()-c.ts>CACHE_TTL)return;
         var b=document.getElementById('community-status-bar');
         if(!b)return;
+        /* Kill the CSS transition so cached restore is truly instant */
+        b.style.transition='none';
         /* Restore online users */
         if(c.html){
             var l=document.getElementById('header-online-users-list');
@@ -92,6 +94,8 @@
         /* Show bar immediately — no layout shift */
         b.classList.remove('hidden');
         b.dataset.alwaysVisible='true';
+        /* Re-enable transitions after first paint for future updates */
+        requestAnimationFrame(function(){requestAnimationFrame(function(){b.style.transition='';});});
     }catch(e){}})();
     </script>
 
