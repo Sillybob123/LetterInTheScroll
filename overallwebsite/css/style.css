@@ -3823,6 +3823,36 @@ body.torah-text-size-xlarge #parsha-text .english-text {
     overflow-y: visible;
 }
 
+/* Loading skeleton for presence bar */
+.presence-loading-skeleton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.6rem;
+}
+.presence-skeleton-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(148, 163, 184, 0.35);
+    animation: presencePulse 1.4s ease-in-out infinite;
+}
+.presence-skeleton-bar {
+    width: 56px;
+    height: 10px;
+    border-radius: 4px;
+    background: rgba(148, 163, 184, 0.2);
+    animation: presencePulse 1.4s ease-in-out 0.15s infinite;
+}
+.presence-skeleton-bar--short {
+    width: 36px;
+    animation-delay: 0.3s;
+}
+@keyframes presencePulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
 #community-status-content {
     gap: 0.65rem !important;
     font-size: 0.68rem;

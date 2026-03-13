@@ -920,8 +920,20 @@ export function displayOnlineUsers(onlineUsers = []) {
         .slice(0, 10);
 
     if (entries.length === 0) {
+        // If cached data is still showing (alwaysVisible), keep it visible
+        // instead of hiding — fresh data will replace it when it arrives
+        const statusBar = document.getElementById('community-status-bar');
+        if (statusBar && statusBar.dataset.alwaysVisible && usersList.innerHTML.trim()) {
+            return;
+        }
         hideOnlineUsers();
         return;
+    }
+
+    // Fresh data arrived — clear the alwaysVisible flag so normal logic applies
+    const statusBarEl = document.getElementById('community-status-bar');
+    if (statusBarEl && statusBarEl.dataset.alwaysVisible) {
+        delete statusBarEl.dataset.alwaysVisible;
     }
 
     usersList.innerHTML = '';

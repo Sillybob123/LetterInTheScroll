@@ -247,10 +247,14 @@
             return;
         }
 
+        // Home/login page has .gradient-header — use the compact login banner
+        if (document.querySelector('.gradient-header')) {
+            createLoginShabbatBanner();
+            return;
+        }
+
         const headerMain = document.querySelector('.header-main');
         if (!headerMain) {
-            // Try login page layout instead
-            createLoginShabbatBanner();
             return;
         }
 

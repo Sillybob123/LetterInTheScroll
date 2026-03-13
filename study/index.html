@@ -73,23 +73,34 @@
     <script>
     (function(){try{
         var CACHE_TTL=14400000; /* 4 hours */
-        var c=JSON.parse(sessionStorage.getItem('presenceCache'));
-        if(!c||Date.now()-c.ts>CACHE_TTL)return;
         var b=document.getElementById('community-status-bar');
         if(!b)return;
-        /* Kill the CSS transition so cached restore is truly instant */
+        var c=null;
+        try{c=JSON.parse(sessionStorage.getItem('presenceCache'));}catch(e){}
+        var hasCache=c&&(Date.now()-c.ts<CACHE_TTL);
+        /* Kill the CSS transition so restore is truly instant */
         b.style.transition='none';
-        /* Restore online users */
-        if(c.html){
-            var l=document.getElementById('header-online-users-list');
-            var s=document.getElementById('header-online-section');
-            if(l&&s){l.innerHTML=c.html;s.classList.remove('hidden');}
-        }
-        /* Restore your-status section */
-        if(c.you){
-            var ys=document.getElementById('header-your-status');
-            var un=document.getElementById('header-your-username');
-            if(ys&&un){un.textContent=c.you;ys.classList.remove('hidden');}
+        if(hasCache){
+            /* Restore online users from cache */
+            if(c.html){
+                var l=document.getElementById('header-online-users-list');
+                var s=document.getElementById('header-online-section');
+                if(l&&s){l.innerHTML=c.html;s.classList.remove('hidden');}
+            }
+            /* Restore your-status section */
+            if(c.you){
+                var ys=document.getElementById('header-your-status');
+                var un=document.getElementById('header-your-username');
+                if(ys&&un){un.textContent=c.you;ys.classList.remove('hidden');}
+            }
+        }else{
+            /* No cache — show loading skeleton so bar reserves space */
+            var ls=document.getElementById('header-online-section');
+            var ll=document.getElementById('header-online-users-list');
+            if(ls&&ll){
+                ll.innerHTML='<span class="presence-loading-skeleton"><span class="presence-skeleton-dot"></span><span class="presence-skeleton-bar"></span><span class="presence-skeleton-bar presence-skeleton-bar--short"></span></span>';
+                ls.classList.remove('hidden');
+            }
         }
         /* Show bar immediately — no layout shift */
         b.classList.remove('hidden');
