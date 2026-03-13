@@ -95,6 +95,15 @@ export function showInfoPanel() {
     panel.classList.remove('hidden');
     requestAnimationFrame(() => panel.classList.add('is-visible'));
     document.body.style.overflow = 'hidden';
+    // Hide text size control (and close any portalled menu) while popup is open
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) {
+        textSizeCtrl.style.visibility = 'hidden';
+        textSizeCtrl.classList.remove('open');
+    }
+    // Also hide the menu if it was portalled to body
+    const textSizeMenu = document.querySelector('.text-size-menu');
+    if (textSizeMenu) textSizeMenu.style.display = 'none';
 }
 
 /**
@@ -109,6 +118,12 @@ export function hideInfoPanel() {
         infoContent.classList.remove('info-content-bookmarks');
     }
     document.body.style.overflow = 'auto';
+    // Restore text size control
+    const textSizeCtrl = document.querySelector('.text-size-control');
+    if (textSizeCtrl) textSizeCtrl.style.visibility = '';
+    // Restore portalled menu display (it manages its own open/close state)
+    const textSizeMenu = document.querySelector('.text-size-menu');
+    if (textSizeMenu) textSizeMenu.style.display = '';
 }
 
 /**
@@ -741,6 +756,11 @@ export function resolveDisplayName(user) {
         return 'Friend';
     }
 
+    // Prefer displayName (set by user in Settings) over username (email-derived)
+    if (user.displayName && typeof user.displayName === 'string' && user.displayName !== 'Friend' && !user.displayName.includes('@')) {
+        return user.displayName;
+    }
+
     const candidate = user.username;
     if (candidate && typeof candidate === 'string' && !candidate.includes('@')) {
         return candidate;
@@ -984,8 +1004,10 @@ export function displayOnlineUsers(onlineUsers = []) {
 
     // Cache rendered HTML for instant restore on next page load
     try {
+        var _un = document.getElementById('header-your-username');
         sessionStorage.setItem('presenceCache', JSON.stringify({
             html: usersList.innerHTML,
+            you: _un ? _un.textContent : '',
             ts: Date.now()
         }));
     } catch (e) { /* quota or private mode — ignore */ }
@@ -1057,6 +1079,14 @@ export function displayLastLogin(username, loginTime) {
 
     yourStatusSection.classList.remove('hidden');
     updateCommunityStatusLayout();
+
+    // Update cache with username for instant restore
+    try {
+        var cached = JSON.parse(sessionStorage.getItem('presenceCache') || '{}');
+        cached.you = username;
+        cached.ts = Date.now();
+        sessionStorage.setItem('presenceCache', JSON.stringify(cached));
+    } catch (e) { /* ignore */ }
 }
 
 function updateLoginTimeDisplay() {

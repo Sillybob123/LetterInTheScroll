@@ -151,7 +151,7 @@
     </div>
     <!-- Instant presence restore — runs before any module loads -->
     <script>
-    (function(){try{var c=JSON.parse(sessionStorage.getItem('presenceCache'));if(!c||!c.html||Date.now()-c.ts>1800000)return;var l=document.getElementById('header-online-users-list');var s=document.getElementById('header-online-section');var b=document.getElementById('community-status-bar');if(l&&s&&b){l.innerHTML=c.html;s.classList.remove('hidden');b.classList.remove('hidden')}}catch(e){}})();
+    (function(){try{var T=14400000;var c=JSON.parse(sessionStorage.getItem('presenceCache'));if(!c||Date.now()-c.ts>T)return;var b=document.getElementById('community-status-bar');if(!b)return;if(c.html){var l=document.getElementById('header-online-users-list');var s=document.getElementById('header-online-section');if(l&&s){l.innerHTML=c.html;s.classList.remove('hidden');}}if(c.you){var ys=document.getElementById('header-your-status');var un=document.getElementById('header-your-username');if(ys&&un){un.textContent=c.you;ys.classList.remove('hidden');}}b.classList.remove('hidden');b.dataset.alwaysVisible='true';}catch(e){}})();
     </script>
 
     <!-- Professional Responsive Header -->

@@ -1004,8 +1004,10 @@ export function displayOnlineUsers(onlineUsers = []) {
 
     // Cache rendered HTML for instant restore on next page load
     try {
+        var _un = document.getElementById('header-your-username');
         sessionStorage.setItem('presenceCache', JSON.stringify({
             html: usersList.innerHTML,
+            you: _un ? _un.textContent : '',
             ts: Date.now()
         }));
     } catch (e) { /* quota or private mode — ignore */ }
@@ -1077,6 +1079,14 @@ export function displayLastLogin(username, loginTime) {
 
     yourStatusSection.classList.remove('hidden');
     updateCommunityStatusLayout();
+
+    // Update cache with username for instant restore
+    try {
+        var cached = JSON.parse(sessionStorage.getItem('presenceCache') || '{}');
+        cached.you = username;
+        cached.ts = Date.now();
+        sessionStorage.setItem('presenceCache', JSON.stringify(cached));
+    } catch (e) { /* ignore */ }
 }
 
 function updateLoginTimeDisplay() {
