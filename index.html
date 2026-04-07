@@ -74,12 +74,22 @@
     }
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/shabbat.css">
+    <!-- Preload LCP image -->
+    <link rel="preload" as="image" href="media/images/logonew-160.png" fetchpriority="high">
+    <!-- Critical Tailwind utilities (inlined to eliminate 768KB render-blocking CDN script) -->
+    <style>
+        .flex{display:flex}.flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.block{display:block}.hidden{display:none}.inline-block{display:inline-block}.relative{position:relative}.absolute{position:absolute}.fixed{position:fixed}.overflow-hidden{overflow:hidden}.min-h-screen{min-height:100vh}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.w-full{width:100%}.w-5{width:1.25rem}.w-6{width:1.5rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-w-md{max-width:28rem}.p-4{padding:1rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pt-3{padding-top:0.75rem}.pt-10{padding-top:2.5rem}.pb-5{padding-bottom:1.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-3{margin-bottom:0.75rem}.mr-1{margin-right:0.25rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mx-8{margin-left:2rem;margin-right:2rem}.mx-auto{margin-left:auto;margin-right:auto}.my-5{margin-top:1.25rem;margin-bottom:1.25rem}.-mt-0\.5{margin-top:-0.125rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}.tracking-wider{letter-spacing:0.05em}.whitespace-nowrap{white-space:nowrap}.text-white{color:#fff}.text-white\/70{color:rgba(255,255,255,0.7)}.text-gray-600{color:#4b5563}.text-gray-900{color:#111827}.text-red-700{color:#b91c1c}.text-green-700{color:#15803d}.text-amber-600{color:#d97706}.text-amber-900{color:#78350f}.text-blue-200{color:#bfdbfe}.bg-red-50{background-color:#fef2f2}.bg-green-50{background-color:#f0fdf4}.border{border-width:1px}.border-red-200{border-color:#fecaca}.border-green-200{border-color:#bbf7d0}.rounded-xl{border-radius:0.75rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.shadow{box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px -1px rgba(0,0,0,0.1)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms}.z-50{z-index:50}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.hover\:text-white:hover{color:#fff}
+    </style>
+    <!-- Defer non-critical CSS -->
+    <link rel="stylesheet" href="/css/shabbat.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/css/shabbat.css"></noscript>
+    <!-- Defer reCAPTCHA until needed -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Preconnect + non-blocking Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"></noscript>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -106,12 +116,6 @@
         }
         .gradient-header {
             background: linear-gradient(138deg, #0c1a3a 0%, #162b60 40%, #1e3d7a 75%, #274d94 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 12s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
         }
         .gold-accent { color: #b88b26; }
         .gold-border { border-color: #c9a03f; }
@@ -413,7 +417,7 @@
         </div>
         <!-- About button -->
         <div style="position:absolute;top:1.1rem;right:1.1rem;z-index:2;">
-            <a href="/about" style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.45rem 1.1rem;border-radius:999px;font-size:0.8rem;font-weight:600;color:rgba(255,220,130,0.9);background:rgba(255,255,255,0.08);border:1px solid rgba(212,175,55,0.25);text-decoration:none;backdrop-filter:blur(6px);transition:all 0.25s ease;letter-spacing:0.03em;" onmouseover="this.style.background='rgba(212,175,55,0.15)';this.style.borderColor='rgba(212,175,55,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(212,175,55,0.25)'">
+            <a href="/about" style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.65rem 1.1rem;border-radius:999px;font-size:0.8rem;min-height:44px;font-weight:600;color:rgba(255,220,130,0.9);background:rgba(255,255,255,0.08);border:1px solid rgba(212,175,55,0.25);text-decoration:none;backdrop-filter:blur(6px);transition:all 0.25s ease;letter-spacing:0.03em;" onmouseover="this.style.background='rgba(212,175,55,0.15)';this.style.borderColor='rgba(212,175,55,0.4)'" onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.borderColor='rgba(212,175,55,0.25)'">
                 <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 About
             </a>
@@ -459,7 +463,7 @@
 
                         <!-- Card Header with Logo -->
                         <div class="text-center pt-10 pb-5 px-8">
-                            <img src="media/images/logonew.png" alt="A Letter in the Scroll" style="width:80px;height:80px;margin-bottom:1.25rem;display:block;margin-left:auto;margin-right:auto;">
+                            <img src="media/images/logonew-160.png" alt="A Letter in the Scroll" width="80" height="80" fetchpriority="high" style="margin-bottom:1.25rem;display:block;margin-left:auto;margin-right:auto;">
                             <h2 id="login-greeting" class="font-heading" style="font-size:1.9rem;font-weight:700;color:#1a2744;letter-spacing:-0.01em;">Welcome</h2>
                             <p id="login-subtitle" style="color:#6b7280;font-size:0.85rem;margin-top:0.4rem;line-height:1.6;max-width:280px;margin-left:auto;margin-right:auto;">Create an account or sign in to start studying Torah together.</p>
                             <script>
@@ -485,7 +489,7 @@
                                 Continue with Google
                             </button>
 
-                            <div class="or-divider my-5 text-xs font-semibold" style="color:#b5b0a4;letter-spacing:0.06em;">or</div>
+                            <div class="or-divider my-5 text-xs font-semibold" style="color:#7a756c;letter-spacing:0.06em;">or</div>
                         </div>
 
                         <!-- Tabs -->
@@ -526,7 +530,7 @@
                                 <div>
                                     <label for="create-display-name" class="block text-sm font-semibold mb-1.5" style="color:#3d4555;">Your Name</label>
                                     <input type="text" id="create-display-name" minlength="2" maxlength="50" placeholder="e.g., Jane Doe" autocomplete="name" class="input-field w-full px-4 py-3 rounded-xl focus:outline-none text-gray-900" style="border:1.5px solid #ddd8ce;font-size:0.9rem;" />
-                                    <p class="text-xs mt-1" style="color:#a09a8e;">We will greet you by first name (for example: "Shalom, Jane").</p>
+                                    <p class="text-xs mt-1" style="color:#736b62;">We will greet you by first name (for example: "Shalom, Jane").</p>
                                 </div>
                                 <div>
                                     <label for="create-email" class="block text-sm font-semibold mb-1.5" style="color:#3d4555;">Email Address</label>
@@ -543,7 +547,7 @@
                                 <div>
                                     <label for="create-birthday" class="block text-sm font-semibold mb-1.5" style="color:#3d4555;">Date of Birth</label>
                                     <input type="date" id="create-birthday" required autocomplete="bday" class="input-field w-full px-4 py-3 rounded-xl focus:outline-none text-gray-900" style="border:1.5px solid #ddd8ce;font-size:0.9rem;" />
-                                    <p class="text-xs mt-1" style="color:#a09a8e;">Used to calculate your personal daily Psalm and celebrate your Hebrew birthday.</p>
+                                    <p class="text-xs mt-1" style="color:#736b62;">Used to calculate your personal daily Psalm and celebrate your Hebrew birthday.</p>
                                 </div>
                                 <div>
                                     <label for="create-timezone" class="block text-sm font-semibold mb-1.5" style="color:#3d4555;">Place of Birth</label>
@@ -576,7 +580,7 @@
                                             <option value="Australia/Sydney">Australia (Sydney, Melbourne)</option>
                                         </optgroup>
                                     </select>
-                                    <p class="text-xs mt-1" style="color:#a09a8e;">Used for accurate Hebrew date calculation based on your timezone.</p>
+                                    <p class="text-xs mt-1" style="color:#736b62;">Used for accurate Hebrew date calculation based on your timezone.</p>
                                 </div>
                                 <button id="create-account-btn" onclick="handleCreateAccount()" class="w-full py-3.5 btn-gold text-white rounded-xl transition-all font-bold text-sm" style="margin-top:0.3rem;letter-spacing:0.02em;box-shadow:0 4px 16px rgba(200,154,53,0.25);">Create Account</button>
                             </div>
@@ -592,7 +596,7 @@
                                 </div>
                                 <div style="flex:1;min-width:0;">
                                     <h3 class="font-heading" style="font-size:1.25rem;font-weight:700;color:#1a2744;line-height:1.2;">Join a Chavruta</h3>
-                                    <p style="color:#a09a8e;font-size:0.75rem;margin-top:0.15rem;">Paste an invite link or 16-character code</p>
+                                    <p style="color:#736b62;font-size:0.75rem;margin-top:0.15rem;">Paste an invite link or 16-character code</p>
                                 </div>
                             </div>
                             <div class="flex gap-3" style="margin-top:1rem;">
@@ -668,7 +672,7 @@
                             <p class="font-heading" style="font-size:1.05rem;color:#1a2744;font-style:italic;line-height:1.5;max-width:340px;margin:0 auto 0.5rem;">
                                 "When one letter is missing, the scroll is incomplete. When one person is missing, the people are incomplete."
                             </p>
-                            <p style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#a09a8e;font-weight:600;margin-bottom:0.8rem;">— Inspired by the Zohar</p>
+                            <p style="font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:#736b62;font-weight:600;margin-bottom:0.8rem;">— Inspired by the Zohar</p>
                             <div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,#c89a35,transparent);margin:0 auto 0.8rem;"></div>
                             <p class="font-heading" style="font-size:0.82rem;font-style:italic;color:#8b8680;line-height:1.45;">
                                 Chazak, chazak, v'nitchazek —<br>Be strong, be strong, and let us strengthen one another.
@@ -734,7 +738,7 @@
 
                 <!-- Bottom nav: ‹ dots › -->
                 <div style="position:absolute;bottom:1rem;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:0.7rem;z-index:10;">
-                    <button onclick="mcPrev()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" aria-label="Previous slide">
+                    <button onclick="mcPrev()" style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" aria-label="Previous slide">
                         <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                     </button>
                     <div style="display:flex;gap:0.45rem;align-items:center;">
@@ -742,7 +746,7 @@
                         <button onclick="mcGoTo(1)" id="mc-dot-1" style="width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.35);padding:0;transition:all 0.25s;" aria-label="Slide 2"></button>
                         <button onclick="mcGoTo(2)" id="mc-dot-2" style="width:7px;height:7px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.35);padding:0;transition:all 0.25s;" aria-label="Slide 3"></button>
                     </div>
-                    <button onclick="mcNext()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" aria-label="Next slide">
+                    <button onclick="mcNext()" style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" aria-label="Next slide">
                         <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
@@ -829,7 +833,7 @@
                 <!-- Closing quote + tagline -->
                 <div style="text-align:center;margin-top:2.5rem;">
                     <p class="font-heading" style="font-size:clamp(1.1rem,2.2vw,1.35rem);color:#1a2744;font-style:italic;line-height:1.6;max-width:550px;margin:0 auto 0.5rem;">"You are the heir to a story written by a hundred generations — and there is a final chapter that only you can write."</p>
-                    <p style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:#a09a8e;font-weight:600;margin-bottom:1rem;">— Rabbi Jonathan Sacks</p>
+                    <p style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:#736b62;font-weight:600;margin-bottom:1rem;">— Rabbi Jonathan Sacks</p>
                     <p class="font-heading" style="font-size:0.88rem;color:#8b8680;font-style:italic;letter-spacing:0.01em;">Your letter. Your story. Your scroll.</p>
                 </div>
 
